@@ -1,31 +1,23 @@
 import numpy
 from sympy import *
 from sympy.solvers import solve
-
+from sympy.solvers.solveset import nonlinsolve
+from sympy.solvers import solve
+from scipy.optimize import fsolve
 ###############################
-epsilon = Symbol('epsilon',real=True)
-eta = Symbol('eta',real=True)
-x = 1.0
+x = symbols('x')                #epsilon
+y = symbols('y')                #eta
+flux = 1.0
 p = 30.0
 k = 2.5
-TK1 = 1100.0
-TK2 = 480.0
+TSMR = 1100.0
+TWGS = 480.0
+KSMR = 10**((-11660/TSMR) + 13.076)
+KWGS = 10**((1910/TWGS) - 1.764)
 ###############################
+def equation():
+    eqSMR = KSMR*((k+1)*flux + 2*x - y)**2 * (flux-x) * (k*flux - x) - (x-y)*p**2*27*x**3
+    eqWGS = KWGS*(k*flux*(x - y) - x**2 + y**2) - y*(3*x + y)
+    return nonlinsolve([eqSMR, eqWGS], [x, y])
 
-def equationSMR():
-    K1 = 10**((-11660/TK1) + 13.076)
-    K2 = 10**((1910/TK2) + 1.764)
-    eq1 = K1*((k+1)*x + 2*epsilon)**2 * (x-epsilon) * (k*x - epsilon) - p**2 *27*epsilon**4
-    eq2 = K2*(epsilon - eta)*(k*x - epsilon - eta) - eta*(3*epsilon + eta)
-
-    return solve([eq1, eq2], [epsilon,eta])
-
-###############################################################################
-#x = Symbol('x')
-#k = Symbol('k')
-#eta = Symbol('eta')
-#epsilon = Symbol('epsilon')
-#print(simplify(((k+1)*x + 2*epsilon)**2 * (x-epsilon) * (k*x - epsilon) - p**2 * 27 * epsilon**4))
-###############################################################################
-
-print(equationSMR())
+print(equation())
