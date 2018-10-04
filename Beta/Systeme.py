@@ -12,8 +12,7 @@ k = 2.5                                                 # Rapport molaire H2O/CH
 TSMR = 1100.0                                           # Temperature en kelvin dans le SMR : variable entre 700K et 1400K
 TWGS = 480.0                                            # Temperature en kelvin dans le WGS : variable entre 700K et 1400K
 KSMR = 10**(-(11650/TSMR) + 13.076)                     # Constante d’equilibre de la reaction Steam Methane Reforming (SMR)
-KWGS = 10**((1910/TWGS) - 1.764)                        # Constante d’equilibre de la reaction Water–Gas Shift (WGS) 
-
+KWGS = 10**((1910/TWGS) - 1.764)                        # Constante d’equilibre de la reaction Water–Gas Shift (WGS)
 
 ###############################
 
