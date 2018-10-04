@@ -3,17 +3,20 @@ from sympy import *
 from sympy.solvers import solve
 from sympy.solvers.solveset import nonlinsolve
 from gekko import GEKKO
+
 ###############################
-#x = symbols('x')                #epsilon
-#y = symbols('y')                #eta
-flux = 1.0
-p = 30.0
-k = 2.5
-TSMR = 1100.0
-TWGS = 480.0
-KSMR = 10**(-(11650/TSMR) + 13.076)
-KWGS = 10**((1910/TWGS) - 1.764)
+
+flux = 1.0                                              # Debit d’entree de CH4 : normalisé a 1 mol/s
+p = 30.0                                                # Pression en bar
+k = 2.5                                                 # Rapport molaire H2O/CH4 dans l’alimentation du reacteur : variable entre 1 et 4
+TSMR = 1100.0                                           # Temperature en kelvin dans le SMR : variable entre 700K et 1400K
+TWGS = 480.0                                            # Temperature en kelvin dans le WGS : variable entre 700K et 1400K
+KSMR = 10**(-(11650/TSMR) + 13.076)                     # Constante d’equilibre de la reaction Steam Methane Reforming (SMR)
+KWGS = 10**((1910/TWGS) - 1.764)                        # Constante d’equilibre de la reaction Water–Gas Shift (WGS) 
+
+
 ###############################
+
 
 def equationVapo():
     """
