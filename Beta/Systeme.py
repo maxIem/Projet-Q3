@@ -19,18 +19,17 @@ KWGS = 10**((1910/TWGS) - 1.764)                        # Constante d’equilibr
 
 def equationVapo():
     """
-    Résout le système non lineaire
+    Resout le systeme non lineaire
     """
     m = GEKKO()
     x = m.Var(value=1)
     y = m.Var(value=1)
-    m.Equation(KSMR*((k+1)*flux + 2*x - y)**2 * (flux-x) * (k*flux - x - y) - ((x-y) * p**2 * (3*x + y)**3)==0)
+    m.Equation(KSMR*((k+1)*flux + 2*x)**2 * (flux-x) * (k*flux - x - y) - ((x-y) * p**2 * (3*x + y)**3)==0)
     m.Equation(KWGS*(x - y)*(k*flux - x - y) - y * (3*x+y)==0)
     m.solve(disp=False)
     print(x.value,y.value)
 
 equationVapo()
-
 
 """
 Ne trouve aucune solution
