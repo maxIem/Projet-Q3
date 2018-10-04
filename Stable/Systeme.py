@@ -1,17 +1,19 @@
 import numpy
 from sympy import *
 from gekko import GEKKO
+
 ###############################
-#x = symbols('x')                #epsilon
-#y = symbols('y')                #eta
-flux = 1.0
-p = 30.0
-k = 2.5
-TSMR = 1100.0
-TWGS = 480.0
+
+flux = 1.0                              # Debit d’entree de CH4 normalise a 1 mol/s
+p = 30.0                                # Pression en bar
+k = 2.5                                 # Rapport molaire H2O/CH4 dans l’alimentation du reacteur : variable entre 1 et 4
+TSMR = 1100.0                           # Temperature en Kelvin variable entre 700 et 1400
+TWGS = 480.0                            # Temperature en Kelvin variable entre 1 et 4
 KSMR = 10**(-(11650/TSMR) + 13.076)
 KWGS = 10**((1910/TWGS) - 1.764)
+
 ###############################
+
 def equationVapo():
     m = GEKKO()
     x = m.Var(value=1)
