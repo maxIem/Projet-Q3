@@ -17,7 +17,7 @@ KWGS = 10**((1910/TWGS) - 1.764)
 
 def equationVapo():
     """
-    Résout le système non lineaire
+    Resout le systeme non lineaire
     """
     m = GEKKO()
     x = m.Var(value=1)
@@ -28,7 +28,6 @@ def equationVapo():
     print(x.value,y.value)
 
 equationVapo()
-
 
 """
 Ne trouve aucune solution
