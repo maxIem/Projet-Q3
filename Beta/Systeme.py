@@ -1,8 +1,9 @@
-import numpy
+import numpy as np
 from sympy import *
 from sympy.solvers import solve
 from sympy.solvers.solveset import nonlinsolve
-from gekko import GEKKO
+from scipy.optimize import fsolve
+#from gekko import GEKKO
 
 ###############################
 
@@ -12,32 +13,13 @@ k = 2.5                                                 # Rapport molaire H2O/CH
 TSMR = 1100.0                                           # Temperature en kelvin dans le SMR : variable entre 700K et 1400K
 TWGS = 480.0                                            # Temperature en kelvin dans le WGS : variable entre 700K et 1400K
 KSMR = 10**(-(11650/TSMR) + 13.076)                     # Constante d’equilibre de la reaction Steam Methane Reforming (SMR)
-KWGS = 10**((1910/TWGS) - 1.764)                        # Constante d’equilibre de la reaction Water–Gas Shift (WGS)
+KWGS = 10**((1910/TWGS) - 1.764)                        # Constante d’equilibre de la reaction Water–Gas Shift (WGS) lors du vaporeformage
 
 ###############################
+def equationsVaporeformage(systemGuess):                #systemGuess correspond aux premieres valeurs pour resoudre le systeme
+    x, y = systemGuess
+    return np.array([KSMR*(flux-x)*(k*flux-x-y)*((k+1)*flux+2*x)**2-((x-y)*(3*x+y)**3)*p**2,
+    KWGS*(x-y)*(k*flux-x-y)-y*(3*x+y)])                 #retourne array [equation avancement SMR, equation avancement WGS]
 
-
-def equationVapo():
-    """
-    Resout le systeme non lineaire
-    """
-    m = GEKKO()
-    x = m.Var(value=1)
-    y = m.Var(value=1)
-    m.Equation(KSMR*((k+1)*flux + 2*x)**2 * (flux-x) * (k*flux - x - y) - ((x-y) * p**2 * (3*x + y)**3)==0)
-    m.Equation(KWGS*(x - y)*(k*flux - x - y) - y * (3*x+y)==0)
-    m.solve(disp=False)
-    print(x.value,y.value)
-
-equationVapo()
-
-"""
-Ne trouve aucune solution
-def equation():
-    eqSMR = KSMR*((k+1)*flux + 2*x - y)**2 * (flux-x) * (k*flux - x - y) - ((x-y) * p**2 * (3*x + y)**3)
-    eqWGS = KWGS*(x - y)*(k*flux - x - y) - y * (3*x+y)
-    eqSMR = simplify(eqSMR)
-    eqWGS = simplify(eqWGS)
-    return nonlinsolve([eqSMR,eqWGS], [x, y])
-print(equation())
-"""
+sol =  fsolve(equationsVaporeformage, np.array([flux,flux]))    #resous le systeme
+print(sol)
