@@ -9,7 +9,7 @@ La version stable du code est disponible [ici](https://github.com/maxIem/Projet-
 # Versions
 ## 1.2
 * Résous le système de Vaporeformage grâce à [fsolve](https://docs.scipy.org/doc/scipy-0.14.0/reference/generated/scipy.optimize.fsolve.html)
-* Résous le système de **[T_0]** à **[T_1]** et plot les résultats en fonction de la température
+* Résous le système de **[T<sub>0</sub>]** à **[T<sub>1</sub>]** et plot les résultats en fonction de la température
 * Optimisation de la résolution
 * besoinMethaneAutotherme est complet
 
