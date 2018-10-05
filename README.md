@@ -7,9 +7,12 @@ Vous trouverez ici le code que nous avons utilisé afin de résoudre le système
 La version stable du code est disponible [ici](https://github.com/maxIem/Projet-Q3/tree/master/Stable)
 
 # Versions
+## 1.2.1
+* Résous le système de **[P<sub>min</sub>]** à **[P<sub>max</sub>]** et plot les résultats en fonction de la pression
+
 ## 1.2
 * Résous le système de Vaporeformage grâce à [fsolve](https://docs.scipy.org/doc/scipy-0.14.0/reference/generated/scipy.optimize.fsolve.html)
-* Résous le système de **[T<sub>0</sub>]** à **[T<sub>1</sub>]** et plot les résultats en fonction de la température
+* Résous le système de **[T<sub>min</sub>]** à **[T<sub>max</sub>]** et plot les résultats en fonction de la température
 * Optimisation de la résolution
 * besoinMethaneAutotherme est complet
 
