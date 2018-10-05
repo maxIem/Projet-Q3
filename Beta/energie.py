@@ -1,7 +1,9 @@
-import numpy
+from numpy import *
 from sympy import *
 from sympy.solvers import solve
 from sympy.solvers.solveset import nonlinsolve
+from matplotlib import pyplot as plt
+
 
 ###############################
 
@@ -47,5 +49,10 @@ def besoinMethaneAutotherme(tIn, tOut, n):                  # Surplu de methane 
     return (x)
 
 
-#print(besoinEnergieClassique(693, 1100, 1, 2.5))
-print(besoinMethaneAutotherme(300, 1300, 10))
+
+print(besoinEnergieClassique(693, 1100, 1, 2.5))
+
+temp = arange(700, 1400)
+plt.figure()
+plt.plot(temp, besoinMethaneAutotherme(300, temp, 10))
+plt.show()
