@@ -5,7 +5,7 @@ from sympy.solvers.solveset import nonlinsolve
 from matplotlib import pyplot as plt
 
 
-###############################
+#######################################
 
 
 CpGazF = 1200                   # Capacité calorifique des gaz du four en J/(kg.K)
@@ -18,7 +18,7 @@ MmH2O = 0.018                   # Masse molaire du H2O en kg/mol
 MmO2 = 0.032                    # Masse molaire du O2 en kg/mol
 
 
-###############################
+#######################################
 
 
 # tIn  : Temperature d'entree des gaz
