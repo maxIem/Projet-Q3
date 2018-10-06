@@ -12,10 +12,13 @@ CpGazF = 1200                   # Capacité calorifique des gaz du four en J/(kg
 CpGazP = 2900                   # Capacité calorifique des gaz du procede en J/(kg.K)
 dHSMR = 224000                  # Enthalpie de la réaction SMR en J/mol
 dHWGS = -34000                  # Enthalpie de la réaction WGS en J/mol
-dHCH4 = -803000                 # Enthalpie de la combustion du CH4
+dHCH4 = -803000                 # Enthalpie de la combustion du CH4 en J/mol
 MmCH4 = 0.01604                 # Masse molaire du CH4 en kg/mol
 MmH2O = 0.018                   # Masse molaire du H2O en kg/mol
 MmO2 = 0.032                    # Masse molaire du O2 en kg/mol
+MmN2 = 0.028                    # Masse molaire du N2 en kg/mol
+
+tExt = 293.15                   # Temperature des gaz injectés directement de l'exterieur: air en Kelvin
 
 
 ###############################
@@ -30,6 +33,18 @@ def besoinEnergieClassique(tIn, tOut, n, k):                    # Energie necess
     E1 = dHSMR * n                                          # Energie neccesaire a la reaction
     E2 = CpGazP * (tOut-tIn) * (n*MmCH4 + n*k*MmH2O)        # Energie necessaire pour elever la temperature des gaz
     return(E1 + E2)
+
+
+# e : Energie en joule
+
+def besoinMethaneEnergie(e):                                    # Methane necessaire pour une certaine quantite d'energie dans un four classique en moles
+    E1 = CpGazP * (1223 - tExt) * (2*(20/100)*MmO2 + 2*(78/100)*MmN2 + 1*MmCH4) #*n   # Energie necessaire pour augmenter la temperature des gaz a bruler jusque 1223K
+    E2 = dHCH4
+    n = -e / (E1 + E2)          # (E1 + E2)*n + e = 0        (E1 + E2)*n = -e    n =
+    return(n)
+
+
+
 
 
 # tIn  : temperature d'entree des gaz
@@ -50,9 +65,16 @@ def besoinMethaneAutotherme(tIn, tOut, n):                      # Surplu de meth
 
 
 
-print(besoinEnergieClassique(693, 1100, 1, 2.5))
+print(besoinMethaneEnergie(besoinEnergieClassique(693, 1100, 1, 2.5)))
+print(besoinMethaneAutotherme(693, 1100, 1))
 
 temp = arange(700, 1400)
+mol = arange(1, 30)
 plt.figure()
-plt.plot(temp, besoinMethaneAutotherme(300, temp, 10))
+plt.plot(temp, besoinMethaneAutotherme(300, temp, 10), '-r',label='Autotherme')
+plt.plot(temp, besoinMethaneEnergie(besoinEnergieClassique(300, temp, 10, 2.5)), '-b',label='Classique')
+plt.title('Consommation en methane pour un flux de 10 mol/s')
+plt.xlabel('Temperature de sortie des gaz (K)')
+plt.ylabel('Quantite de methane (mol/s)')
+plt.legend(loc='upper right')
 plt.show()
