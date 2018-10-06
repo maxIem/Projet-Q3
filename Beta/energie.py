@@ -5,7 +5,7 @@ from sympy.solvers.solveset import nonlinsolve
 from matplotlib import pyplot as plt
 
 
-###############################
+#######################################
 
 
 CpGazF = 1200                   # Capacité calorifique des gaz du four en J/(kg.K)
@@ -21,7 +21,7 @@ MmN2 = 0.028                    # Masse molaire du N2 en kg/mol
 tExt = 293.15                   # Temperature des gaz injectés directement de l'exterieur: air en Kelvin
 
 
-###############################
+#######################################
 
 
 # tIn  : Temperature d'entree des gaz
@@ -29,7 +29,7 @@ tExt = 293.15                   # Temperature des gaz injectés directement de l
 # n    : Nombre de moles de CH4 en entree
 # k    : Rapport molaire H2O/CH4 dans l’alimentation du reacteur
 
-def besoinEnergieClassique(tIn, tOut, n, k):                    # Energie necessaire pour le SMR besoinEnergieClassique en joule
+def besoinEnergieClassique(tIn, tOut, n, k):                # Energie necessaire pour le SMR besoinEnergieClassique en joule
     E1 = dHSMR * n                                          # Energie neccesaire a la reaction
     E2 = CpGazP * (tOut-tIn) * (n*MmCH4 + n*k*MmH2O)        # Energie necessaire pour elever la temperature des gaz
     return(E1 + E2)
@@ -51,7 +51,7 @@ def besoinMethaneEnergie(e):                                    # Methane necess
 # tOut : temperature de sortie des gaz
 # n    : nombre de moles de CH4 en entree par seconde
 
-def besoinMethaneAutotherme(tIn, tOut, n):                      # Surplu de methane necessaire pour le SMR autotherme en moles
+def besoinMethaneAutotherme(tIn, tOut, n):                  # Surplu de methane necessaire pour le SMR autotherme en moles
     k = 1.15                                                # Rapport molaire H2O/CH4 : fixe pour Autotherme
     l = 0.6                                                 # Rapport molaire O2/CH4 : fixe pour Autotherme
 
