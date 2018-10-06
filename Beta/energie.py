@@ -44,9 +44,6 @@ def besoinMethaneEnergie(e):                                    # Methane necess
     return(n)
 
 
-
-
-
 # tIn  : temperature d'entree des gaz
 # tOut : temperature de sortie des gaz
 # n    : nombre de moles de CH4 en entree par seconde
@@ -64,10 +61,6 @@ def besoinMethaneAutotherme(tIn, tOut, n):                  # Surplu de methane 
     return (x)
 
 
-
-print(besoinMethaneEnergie(besoinEnergieClassique(693, 1100, 1, 2.5)))
-print(besoinMethaneAutotherme(693, 1100, 1))
-
 temp = arange(700, 1400)
 mol = arange(1, 30)
 plt.figure()
@@ -77,4 +70,5 @@ plt.title('Consommation en methane pour un flux de 10 mol/s')
 plt.xlabel('Temperature de sortie des gaz (K)')
 plt.ylabel('Quantite de methane (mol/s)')
 plt.legend(loc='upper right')
+plt.grid(axis='both')
 plt.show()
