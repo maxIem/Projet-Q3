@@ -20,7 +20,6 @@ MmN2 = 0.028                    # Masse molaire du N2 en kg/mol
 
 tExt = 293.15                   # Temperature des gaz injectés directement de l'exterieur: air en Kelvin
 
-
 #######################################
 
 
@@ -28,27 +27,31 @@ tExt = 293.15                   # Temperature des gaz injectés directement de l
 # tOut : Temperature de sortie des gaz
 # n    : Nombre de moles de CH4 en entree
 # k    : Rapport molaire H2O/CH4 dans l’alimentation du reacteur
-
-def besoinEnergieClassique(tIn, tOut, n, k):                # Energie necessaire pour le SMR besoinEnergieClassique en joule
+# Energie necessaire pour le SMR classique en joule
+def besoinEnergieClassique(tIn, tOut, n, k):
     E1 = dHSMR * n                                          # Energie neccesaire a la reaction
     E2 = CpGazP * (tOut-tIn) * (n*MmCH4 + n*k*MmH2O)        # Energie necessaire pour elever la temperature des gaz
     return(E1 + E2)
 
+#######################################
+
 
 # e : Energie en joule
-
-def besoinMethaneEnergie(e):                                    # Methane necessaire pour une certaine quantite d'energie dans un four classique en moles
+# Methane necessaire pour une certaine quantite d'energie dans un four classique en moles
+def besoinMethaneEnergie(e):
     E1 = CpGazP * (1223 - tExt) * (2*(20/100)*MmO2 + 2*(78/100)*MmN2 + 1*MmCH4) #*n   # Energie necessaire pour augmenter la temperature des gaz a bruler jusque 1223K
     E2 = dHCH4
-    n = -e / (E1 + E2)          # (E1 + E2)*n + e = 0        (E1 + E2)*n = -e    n =
+    n = -e / (E1 + E2)
     return(n)
+
+#######################################
 
 
 # tIn  : temperature d'entree des gaz
 # tOut : temperature de sortie des gaz
 # n    : nombre de moles de CH4 en entree par seconde
-
-def besoinMethaneAutotherme(tIn, tOut, n):                  # Surplu de methane necessaire pour le SMR autotherme en moles
+# Surplu de methane necessaire pour le SMR autotherme en moles
+def besoinMethaneAutotherme(tIn, tOut, n):
     k = 1.15                                                # Rapport molaire H2O/CH4 : fixe pour Autotherme
     l = 0.6                                                 # Rapport molaire O2/CH4 : fixe pour Autotherme
 
@@ -60,8 +63,10 @@ def besoinMethaneAutotherme(tIn, tOut, n):                  # Surplu de methane 
     x = (-E1-E3) / (E2+E4)
     return (x)
 
+#######################################
 
-temp = arange(700, 1400)
+
+temp = arange(700, 1401)
 mol = arange(1, 30)
 plt.figure()
 plt.plot(temp, besoinMethaneAutotherme(300, temp, 10), '-r',label='Autotherme')
