@@ -9,9 +9,8 @@ flux = 1.0                                              # Debit d’entree de CH
 p = 30.0                                                # Pression en bar
 k = 2.5                                                 # Rapport molaire H2O/CH4 dans l’alimentation du reacteur : variable entre 1 et 4
 TSMR = 1100.0                                           # Temperature en kelvin dans le SMR : variable entre 700K et 1400K
-TWGS = 480.0                                            # Temperature en kelvin dans le WGS : variable entre 700K et 1400K
 KSMR = 10**(-(11650/TSMR) + 13.076)                     # Constante d’equilibre de la reaction Steam Methane Reforming (SMR)
-KWGS = 10**((1910/TWGS) - 1.764)                        # Constante d’equilibre de la reaction Water–Gas Shift (WGS) lors du vaporeformage
+KWGS = 10**((1910/TSMR) - 1.764)                        # Constante d’equilibre de la reaction Water–Gas Shift (WGS) lors du vaporeformage
 
 temperature_Tab = np.arange(700,1401)                   # Tableau contenant les temperatures de 700 a 1400 K
 SMR_T_Tab = np.zeros(len(temperature_Tab))              # Tableau contenant les degre d'avancement SMR pour chaque temperatures de temperature_Tab
@@ -20,6 +19,10 @@ WGS_T_Tab = np.zeros(len(temperature_Tab))              # Tableau contenant les 
 pression_Tab = np.arange(10,40,0.2)                     # Tableau contenant les pressions de 10 a 40 bar
 SMR_P_Tab = np.zeros(len(pression_Tab))                 # Tableau contenant les degre d'avancement SMR pour chaque pression de pression_Tab
 WGS_P_Tab = np.zeros(len(pression_Tab))                 # Tableau contenant les degre d'avancement WGS pour chaque pression de pression_Tab
+
+ratio_Tab = np.arange(1,4,0.1)                     # Tableau contenant les pressions de 10 a 40 bar
+SMR_K_Tab = np.zeros(len(ratio_Tab))                 # Tableau contenant les degre d'avancement SMR pour chaque pression de pression_Tab
+WGS_K_Tab = np.zeros(len(ratio_Tab))                 # Tableau contenant les degre d'avancement WGS pour chaque pression de pression_Tab
 
 #######################################
 
@@ -43,6 +46,7 @@ def VaporeformageTvariable():
     i = 0
     for T in temperature_Tab:                           # Resous le systeme pour toutes les temperatures
         KSMR = 10**(-(11650/T) + 13.076)
+        KWGS = 10**((1910/T) - 1.764)                        # Constante d’equilibre de la reaction Water–Gas Shift (WGS) lors du vaporeformage
         result_System = fsolve(equationsVaporeformage,
             np.array([SMR_T_Tab[i-1],WGS_T_Tab[i-1]]), args=(KSMR,KWGS,p,k,flux))
         SMR_T_Tab[i] = result_System[0]
@@ -59,19 +63,24 @@ def VaporeformageTvariable():
 #######################################
 
 
-def Vaporeformage(temperature):
-
-
-    plt.plot(temperature_Tab,SMR_T_Tab,label='SMR')
-    plt.plot(temperature_Tab,WGS_T_Tab,label='WGS')
-    plt.xlabel('Temperature [K]')
+# Plot le graphe des degres d'avancement, axe x = Ratio H2O/CH4, axe y = degre avancement SMR et WGS
+def VaporeformageKVariable():
+    i = 0
+    for k in ratio_Tab:                           # Resous le systeme pour toutes les temperatures
+        result_System = fsolve(equationsVaporeformage,
+            np.array([SMR_T_Tab[i-1],WGS_T_Tab[i-1]]), args=(KSMR,KWGS,p,k,flux))
+        SMR_K_Tab[i] = result_System[0]
+        WGS_K_Tab[i] = result_System[1]
+        i+=1
+    plt.plot(ratio_Tab,SMR_K_Tab,label='SMR')
+    plt.plot(ratio_Tab,WGS_K_Tab,label='WGS')
+    plt.xlabel('Ratio H2O/CH4')
     plt.ylabel('Degré d\'avancement [mol/s]')               # Le degre d'avancement est exprime en pourcentage du flux d'entree
     plt.grid(axis='both')
     plt.legend()
     plt.show()
 
 #######################################
-
 
 # Plot le graphe des degres d'avancement, axe x = pression, axe y = degre avancement SMR et WGS
 def VaporeformagePvariable():
@@ -92,5 +101,16 @@ def VaporeformagePvariable():
 
 #######################################
 
+# Resous le systeme pour une temperature donnee
+def Vaporeformage(temperature):
+    KSMR = 10**(-(11650/temperature) + 13.076)
+    result_System = fsolve(equationsVaporeformage,np.array([flux,flux]), args=(KSMR,KWGS,p,k,flux))
+    return(result_System)
+
+#######################################
+
+
 VaporeformageTvariable()
 VaporeformagePvariable()
+VaporeformageKVariable()
+#print(Vaporeformage(1100))

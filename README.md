@@ -35,7 +35,7 @@ La version stable du code est disponible [ici](https://github.com/maxIem/Projet-
 - [Julien Jardinet](https://github.com/jjardinet)
 - [Louis Labbé](https://github.com/LouisLabbe)
 - [Maxime Lemerle](https://github.com/maxIem)
-- Samuel Patesson
+- [Samuel Patesson](https://github.com/spatesson)
 
 
 # License
