@@ -48,10 +48,10 @@ def VaporeformageTvariable():
         SMR_T_Tab[i] = result_System[0]
         WGS_T_Tab[i] = result_System[1]
         i+=1
-    plt.plot(temperature_Tab,SMR_T_Tab/flux*100,label='SMR')
-    plt.plot(temperature_Tab,WGS_T_Tab/flux*100,label='WGS')
+    plt.plot(temperature_Tab,SMR_T_Tab,label='SMR')
+    plt.plot(temperature_Tab,WGS_T_Tab,label='WGS')
     plt.xlabel('Temperature [K]')
-    plt.ylabel('Degre d\'avancement [%]')               # Le degre d'avancement est exprime en pourcentage du flux d'entree
+    plt.ylabel('Conversion [mol/s]')               # Le degre d'avancement est exprime en pourcentage du flux d'entree
     plt.grid(axis='both')
     plt.legend()
     plt.show()
@@ -67,10 +67,10 @@ def VaporeformagePvariable():
         SMR_P_Tab[i] = result_System[0]
         WGS_P_Tab[i] = result_System[1]
         i+=1
-    plt.plot(pression_Tab,SMR_P_Tab/flux*100,label='SMR')
-    plt.plot(pression_Tab,WGS_P_Tab/flux*100,label='WGS')
+    plt.plot(pression_Tab,SMR_P_Tab,label='SMR')
+    plt.plot(pression_Tab,WGS_P_Tab,label='WGS')
     plt.xlabel('Pression [bar] à %d K' % TSMR)
-    plt.ylabel('Degre d\'avancement [%]')               # Le degre d'avancement est exprime en pourcentage du flux d'entree
+    plt.ylabel('Conversion [mol/s]')               # Le degre d'avancement est exprime en pourcentage du flux d'entree
     plt.grid(axis='both')
     plt.legend()
     plt.show()
