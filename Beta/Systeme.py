@@ -58,17 +58,11 @@ def VaporeformageTvariable():
 
 #######################################
 
-
+#
 def Vaporeformage(temperature):
-
-
-    plt.plot(temperature_Tab,SMR_T_Tab,label='SMR')
-    plt.plot(temperature_Tab,WGS_T_Tab,label='WGS')
-    plt.xlabel('Temperature [K]')
-    plt.ylabel('Degré d\'avancement [mol/s]')               # Le degre d'avancement est exprime en pourcentage du flux d'entree
-    plt.grid(axis='both')
-    plt.legend()
-    plt.show()
+    KSMR = 10**(-(11650/temperature) + 13.076)
+    result_System = fsolve(equationsVaporeformage,np.array([flux,flux]), args=(KSMR,KWGS,p,k,flux))
+    return(result_System)
 
 #######################################
 
@@ -92,5 +86,6 @@ def VaporeformagePvariable():
 
 #######################################
 
-VaporeformageTvariable()
-VaporeformagePvariable()
+#VaporeformageTvariable()
+#VaporeformagePvariable()
+print(Vaporeformage(1100))
