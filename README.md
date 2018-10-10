@@ -29,11 +29,11 @@ La version stable du code est disponible [ici](https://github.com/maxIem/Projet-
 # Credits
 
 - [Léopold Clausse](https://github.com/lclausse)
-- Nicolas Cruysberghs
+- [Nicolas Cruysberghs] (https://github.com/Nicocruys)
 - Mattys Gouverneur
-- Julien Herman
-- Julien Jardinet
-- Louis Labbé
+- [Julien Herman] (https://github.com/LouisLabbe)
+- Julien Jardinet (https://github.com/jjardinet)
+- [Louis Labbé] (https://github.com/LouisLabbe)
 - [Maxime Lemerle](https://github.com/maxIem)
 - Samuel Patesson
 
