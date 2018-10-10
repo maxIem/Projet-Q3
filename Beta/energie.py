@@ -66,14 +66,20 @@ def besoinMethaneAutotherme(tIn, tOut, n):
 #######################################
 
 
-temp = arange(700, 1401)
-mol = arange(1, 30)
-plt.figure()
-plt.plot(temp, besoinMethaneAutotherme(300, temp, 10), '-r',label='Autotherme')
-plt.plot(temp, besoinMethaneEnergie(besoinEnergieClassique(300, temp, 10, 2.5)), '-b',label='Classique')
-plt.title('Consommation en methane pour un flux de 10 mol/s')
-plt.xlabel('Temperature de sortie des gaz (K)')
-plt.ylabel('Quantite de methane (mol/s)')
-plt.legend(loc='upper right')
-plt.grid(axis='both')
-plt.show()
+# plot le graphe du besoin de methane en fonction de la temperature de sortie des gaz pour deux methodes
+def plotEnergie():
+    temp = arange(700, 1401)
+    mol = arange(1, 30)
+    plt.figure()
+    plt.plot(temp, besoinMethaneAutotherme(300, temp, 10), '-r',label='Autotherme')
+    plt.plot(temp, besoinMethaneEnergie(besoinEnergieClassique(300, temp, 10, 2.5)), '-b',label='Classique')
+    plt.title('Consommation en methane pour un flux de 10 mol/s')
+    plt.xlabel('Temperature de sortie des gaz (K)')
+    plt.ylabel('Quantite de methane (mol/s)')
+    plt.legend(loc='upper right')
+    plt.grid(axis='both')
+    plt.show()
+
+#######################################
+
+plotEnergie()
