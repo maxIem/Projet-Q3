@@ -8,8 +8,8 @@ from matplotlib import pyplot as plt
 #######################################
 
 
-CpGazF = 1200                   # Capacité calorifique des gaz du four en J/(kg.K)
-CpGazP = 2900                   # Capacité calorifique des gaz du procede en J/(kg.K)
+CpGazF = 1200                   # Capacite calorifique des gaz du four en J/(kg.K)
+CpGazP = 2900                   # Capacite calorifique des gaz du procede en J/(kg.K)
 dHSMR = 224000                  # Enthalpie de la réaction SMR en J/mol
 dHWGS = -34000                  # Enthalpie de la réaction WGS en J/mol
 dHCH4 = -803000                 # Enthalpie de la combustion du CH4 en J/mol
@@ -18,7 +18,7 @@ MmH2O = 0.018                   # Masse molaire du H2O en kg/mol
 MmO2 = 0.032                    # Masse molaire du O2 en kg/mol
 MmN2 = 0.028                    # Masse molaire du N2 en kg/mol
 
-tExt = 293.15                   # Temperature des gaz injectés directement de l'exterieur: air en Kelvin
+tExt = 293.15                   # Temperature des gaz injectes directement de l'exterieur: air en Kelvin
 
 #######################################
 
