@@ -32,7 +32,7 @@ La version stable du code est disponible [ici](https://github.com/maxIem/Projet-
 - [Nicolas Cruysberghs](https://github.com/Nicocruys)
 - Mattys Gouverneur
 - [Julien Herman](https://github.com/LouisLabbe)
-- Julien Jardinet(https://github.com/jjardinet)
+- [Julien Jardinet](https://github.com/jjardinet)
 - [Louis Labbé](https://github.com/LouisLabbe)
 - [Maxime Lemerle](https://github.com/maxIem)
 - Samuel Patesson
