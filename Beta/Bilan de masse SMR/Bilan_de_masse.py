@@ -45,4 +45,4 @@ print('Flux de CO2 en sortie %.3f [mol/s]' %(product_Flux_Tab[1][2]))
 print('-----------------------------------')
 
 # Purete = H2/(H2+CH4)
-print('Purete H2 %.2f%%' % (100*product_Flux_Tab[0][1]/(product_Flux_Tab[0][1] + product_Flux_Tab[0][0])))
+print('Purete H2 %.2f%%' % (100*product_Flux_Tab[0][3]/(product_Flux_Tab[0][3] + product_Flux_Tab[0][0])))
