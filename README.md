@@ -10,6 +10,8 @@ La version stable du code est disponible [ici](https://github.com/maxIem/Projet-
 # Versions
 ## 1.2.1
 * Résous le système de **[P<sub>min</sub>]** à **[P<sub>max</sub>]** et plot les résultats en fonction de la pression
+* Création d'un fichier servant d'interface pour accéder et modifier toutes les variables utiles au système
+* Création du fichier Bilan_de_masse qui permet de résoudre tout le système ainsi que d'afficher les flux en différents points de sortie et la pureté finale de H2
 
 ## 1.2
 * Résous le système de Vaporeformage grâce à [fsolve](https://docs.scipy.org/doc/scipy-0.14.0/reference/generated/scipy.optimize.fsolve.html)
