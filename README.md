@@ -2,7 +2,8 @@
 [![license](https://img.shields.io/badge/license-GPL3-brightgreen.svg)](https://github.com/lsonnino/code-metallifood/blob/master/LICENSE)
 
 Vous trouverez ici le code que nous avons utilisé afin de résoudre le système de notre réacteur.
-![alt text](reacteur.pdf)
+![alt text](/reacteur.png)
+
 ## Code:
 La version stable du code est disponible [ici](https://github.com/maxIem/Projet-Q3/tree/master/Stable)
 
