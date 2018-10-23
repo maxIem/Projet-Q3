@@ -83,6 +83,7 @@ def VaporeformagePvariable():
     plt.show()
 #######################################
 
+# Plot le graphe des degres d'avancement, axe x = temperatures, axe y = Ratio H2O/CH4, axe z = degre avancement SMR et WGS
 def VaporeformageTKVariable():
     SMR_Tab = np.zeros((len(temperature_Tab),len(ratio_Tab)))
     WGS_Tab = np.zeros((len(temperature_Tab),len(ratio_Tab)))
