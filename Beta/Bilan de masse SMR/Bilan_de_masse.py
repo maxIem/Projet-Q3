@@ -16,7 +16,7 @@ product_Flux_Tab = []                                   # Initialise le tableau 
 def vaporeformageFluxSortant(Temperature,Pression,Ratio,Flux):
     sol = Vaporeformage(Temperature,Pression,Ratio,Flux)
     return np.array([ [ Flux-sol[0] , Ratio*Flux - sol[0] - sol[1] , sol[0] - sol[1] , 3*sol[0] + sol[1] ],
-    [ sol[0] + sol[1] , Ratio*Flux - sol[0] - sol[1] , sol[1] , 3*sol[0] + sol[1] ] ])
+    [ sol[0] - sol[1] , Ratio*Flux - sol[0] - sol[1] , sol[1] , 3*sol[0] + sol[1] ] ])
 #######################################
 
 
