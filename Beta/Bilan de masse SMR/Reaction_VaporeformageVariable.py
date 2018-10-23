@@ -1,6 +1,7 @@
 import numpy as np
 from scipy.optimize import fsolve
 import matplotlib.pyplot as plt
+from mpl_toolkits.mplot3d import Axes3D
 from Variables import getVariable
 from Reaction_Vaporeformage import equationsVaporeformage
 
@@ -10,7 +11,7 @@ temperature, pression, ratio, flux = getVariable()      # Importe les variables 
 KSMR = 10**(-(11650/temperature) + 13.076)              # Constante d’equilibre de la reaction Steam Methane Reforming (SMR)
 KWGS = 10**((1910/temperature) - 1.764)                 # Constante d’equilibre de la reaction Water–Gas Shift (WGS) lors du vaporeformage
 
-temperature_Tab = np.arange(700,1401)                   # Tableau contenant les temperatures de 700 a 1400 K
+temperature_Tab = np.arange(800,1200,2)                   # Tableau contenant les temperatures de 700 a 1400 K
 SMR_T_Tab = np.zeros(len(temperature_Tab))              # Tableau contenant les degre d'avancement SMR pour chaque temperatures de temperature_Tab
 WGS_T_Tab = np.zeros(len(temperature_Tab))              # Tableau contenant les degre d'avancement WGS pour chaque temperatures de temperature_Tab
 SMR_T_Tab[-1] = flux/2                                  # Initialise les deux premieres valeurs de fsolve pour optimiser le temps de calcul
@@ -82,11 +83,48 @@ def VaporeformagePvariable():
     plt.show()
 #######################################
 
+def VaporeformageTKVariable():
+    SMR_Tab = np.zeros((len(temperature_Tab),len(ratio_Tab)))
+    WGS_Tab = np.zeros((len(temperature_Tab),len(ratio_Tab)))
+    for i in range (0,len(SMR_Tab[-1])):
+        SMR_Tab[-1][i] = flux/2
+        WGS_Tab[-1][i] = flux/2
+    i = 0
+    for T in temperature_Tab:
+        KSMR = 10**(-(11650/T) + 13.076)
+        KWGS = 10**((1910/T) - 1.764)
+        j = 0
+        for ratio in ratio_Tab:                                   # Resous le systeme pour toutes les temperatures
+            result_System = fsolve(equationsVaporeformage,
+                np.array([SMR_Tab[i-1][j-1],WGS_Tab[i-1][j-1]]), args=(KSMR,KWGS,pression,ratio,flux))
+            SMR_Tab[i][j] = result_System[0]
+            WGS_Tab[i][j] = result_System[1]
+            j+=1
+        i+=1
 
+    fig = plt.figure(figsize=plt.figaspect(0.5))
+    ax = fig.add_subplot(1, 2, 1, projection='3d')
+    X, Y = np.meshgrid(temperature_Tab, ratio_Tab)
+    surf = ax.plot_surface(X, Y, SMR_Tab.T, cmap='viridis', edgecolor='none')
+    fig.colorbar(surf, shrink=0.5, aspect=10)
+    ax.set_xlabel('Temperature [K]')
+    ax.set_ylabel('Ratio H20/CH4')
+    ax.set_zlabel('Degré d\'avancement Vaporeformage');
+
+    ax = fig.add_subplot(1, 2, 2, projection='3d')
+    surf = ax.plot_surface(X, Y, WGS_Tab.T, cmap='viridis', edgecolor='none')
+    fig.colorbar(surf, shrink=0.5, aspect=10)
+    ax.set_xlabel('Temperature [K]')
+    ax.set_ylabel('Ratio H20/CH4')
+    ax.set_zlabel('Degré d\'avancement WaterGasShift');
+
+    plt.show()
+#######################################
 
 # Plot des graphs des degres d'avancement en fonction de T, p et k
 #######################################
-VaporeformageTvariable()
-VaporeformagePvariable()
-VaporeformageKVariable()
+#VaporeformageTvariable()
+#VaporeformagePvariable()
+#VaporeformageKVariable()
 #######################################
+VaporeformageTKVariable()
