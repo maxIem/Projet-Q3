@@ -1,8 +1,12 @@
+import matplotlib.pyplot as plt
 import numpy as np
 from scipy.optimize import fsolve
-import matplotlib.pyplot as plt
+
 from Variables import getVariable
 
+#######################################
+# Fichier contenant les differentes fonctions necessaire afin de calculer
+# les degres d'avancement systeme avec des parametres fixes.
 #######################################
 
 temperature, pression, ratio, flux = getVariable()      # Importe les variables depuis Variables.py
@@ -39,6 +43,10 @@ def equationsVaporeformage(systemGuess,KSMR,KWGS,pression,ratio,flux):
 #######################################
 
 # Resous le systeme pour des parametres donnes
+# temperature   : valeur de la temperature
+# p             : valeur de la pression
+# k             : ratio H20/CH4
+# flux          : flux de CH4 en mol/s
 def Vaporeformage(temperature,p,k,flux):
     KSMR = 10**(-(11650/temperature) + 13.076)
     KWGS = 10**((1910/temperature) - 1.764)
@@ -47,6 +55,7 @@ def Vaporeformage(temperature,p,k,flux):
 #######################################
 
 # Retourne la valeur du systeme en focntion des degre d'avancement
+# Utiliser afin de verifier si les degres d'avancement sont correctes
 def verifVaporeformage(z):
     x,y = z
     return np.array([KSMR*(flux-x)*(ratio*flux-x-y)*((ratio+1)*flux+2*x)**2-((x-y)*(3*x+y)**3)*pression**2,

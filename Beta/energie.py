@@ -1,9 +1,8 @@
+from matplotlib import pyplot as plt
 from numpy import *
 from sympy import *
 from sympy.solvers import solve
 from sympy.solvers.solveset import nonlinsolve
-from matplotlib import pyplot as plt
-
 
 #######################################
 
