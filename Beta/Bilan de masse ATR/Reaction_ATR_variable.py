@@ -3,7 +3,7 @@ import numpy as np
 from mpl_toolkits.mplot3d import Axes3D
 from scipy.optimize import fsolve
 
-from Reaction_SMR import equationsVaporeformage
+from Reaction_ATR import equationsATR
 from Variables import getVariable
 
 #######################################
@@ -13,7 +13,7 @@ from Variables import getVariable
 # dans le cadre du projet).
 #######################################
 
-temperature, pression, ratio, flux = getVariable()      # Importe les variables depuis Variables.py
+temperature, pression, ratio, ratioO2, flux = getVariable()      # Importe les variables depuis Variables.py
 KSMR = 10**(-(11650/temperature) + 13.076)              # Constante d’equilibre de la reaction Steam Methane Reforming (SMR)
 KWGS = 10**((1910/temperature) - 1.764)                 # Constante d’equilibre de la reaction Water–Gas Shift (WGS) lors du vaporeformage
 
@@ -40,8 +40,8 @@ def VaporeformageTvariable():
     for T in temperature_Tab:                                # Resous le systeme pour toutes les temperatures
         KSMR = 10**(-(11650/T) + 13.076)
         KWGS = 10**((1910/T) - 1.764)                        # Constante d’equilibre de la reaction Water–Gas Shift (WGS) lors du vaporeformage
-        result_System = fsolve(equationsVaporeformage,
-            np.array([SMR_T_Tab[i-1],WGS_T_Tab[i-1]]), args=(KSMR,KWGS,pression,ratio,flux))
+        result_System = fsolve(equationsATR,
+            np.array([SMR_T_Tab[i-1],WGS_T_Tab[i-1]]), args=(KSMR,KWGS,pression,ratio,ratioO2,flux))
         SMR_T_Tab[i] = result_System[0]
         WGS_T_Tab[i] = result_System[1]
         i+=1
@@ -59,8 +59,8 @@ def VaporeformageTvariable():
 def VaporeformageKVariable():
     i = 0
     for ratio in ratio_Tab:                                   # Resous le systeme pour toutes les temperatures
-        result_System = fsolve(equationsVaporeformage,
-            np.array([SMR_K_Tab[i-1],WGS_K_Tab[i-1]]), args=(KSMR,KWGS,pression,ratio,flux))
+        result_System = fsolve(equationsATR,
+            np.array([SMR_K_Tab[i-1],WGS_K_Tab[i-1]]), args=(KSMR,KWGS,pression,ratio,ratioO2,flux))
         SMR_K_Tab[i] = result_System[0]
         WGS_K_Tab[i] = result_System[1]
         i+=1
@@ -68,25 +68,6 @@ def VaporeformageKVariable():
     plt.plot(ratio_Tab,WGS_K_Tab,label='WGS')
     plt.xlabel('Ratio H2O/CH4 à %d K' % temperature)
     plt.ylabel('Degré d\'avancement [mol/s]')               # Le degre d'avancement est exprime en pourcentage du flux d'entree
-    plt.grid(axis='both')
-    plt.legend()
-    plt.show()
-#######################################
-
-# Plot le graphe des degres d'avancement, axe x = pression,
-# axe y = degre avancement SMR et WGS
-def VaporeformagePvariable():
-    i = 0
-    for pression in pression_Tab:                       # Resous le systeme pour toutes les pressions
-        result_System = fsolve(equationsVaporeformage,
-            np.array([SMR_P_Tab[i-1],WGS_P_Tab[i-1]]), args=(KSMR,KWGS,pression,ratio,flux))
-        SMR_P_Tab[i] = result_System[0]
-        WGS_P_Tab[i] = result_System[1]
-        i+=1
-    plt.plot(pression_Tab,SMR_P_Tab,label='SMR')
-    plt.plot(pression_Tab,WGS_P_Tab,label='WGS')
-    plt.xlabel('Pression [bar] à %d K' % temperature)
-    plt.ylabel('Conversion [mol/s]')               # Le degre d'avancement est exprime en pourcentage du flux d'entree
     plt.grid(axis='both')
     plt.legend()
     plt.show()
@@ -105,12 +86,8 @@ def VaporeformageTKVariable(plot):
         KWGS = 10**((1910/T) - 1.764)
         j = 0
         for ratio in ratio_Tab:                                   # Resous le systeme pour toutes les temperatures
-            result_System = fsolve(equationsVaporeformage,
-                np.array([SMR_Tab[i-1][j-1],WGS_Tab[i-1][j-1]]), args=(KSMR,KWGS,pression,ratio,flux))
-            if result_System[0]<0 or result_System[0]>1  or result_System[1]<0 or result_System[1]>0.5 :
-                result_System = fsolve(equationsVaporeformage, np.array([1,1]), args=(KSMR,KWGS,pression,ratio,flux))
-                if result_System[0]<0 or result_System[0]>1  or result_System[1]<0 or result_System[1]>0.5 :
-                    result_System = fsolve(equationsVaporeformage, np.array([0.8,0.2]), args=(KSMR,KWGS,pression,ratio,flux))
+            result_System = fsolve(equationsATR,
+                np.array([SMR_Tab[i-1][j-1],WGS_Tab[i-1][j-1]]), args=(KSMR,KWGS,pression,ratio,ratioO2,flux))
             SMR_Tab[i][j] = result_System[0]
             WGS_Tab[i][j] = result_System[1]
             j+=1
@@ -140,7 +117,6 @@ def VaporeformageTKVariable(plot):
 # Plot des graphs des degres d'avancement en fonction de T, p et k
 #######################################
 #VaporeformageTvariable()
-#VaporeformagePvariable()
 #VaporeformageKVariable()
 #VaporeformageTKVariable(True)
 #######################################
