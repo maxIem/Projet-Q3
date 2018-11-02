@@ -5,8 +5,8 @@ from scipy.optimize import fsolve
 
 from Bilan_de_masse import (vaporeformageDegreAvancement,
                             vaporeformageFluxSortant)
-from Reaction_SMR import equationsVaporeformage
-from Reaction_SMR_variable import VaporeformageTKVariable
+from Reaction_ATR import equationsATR
+from Reaction_ATR_variable import VaporeformageTKVariable
 from Variables import getVariable
 
 #######################################
@@ -15,7 +15,7 @@ from Variables import getVariable
 # ou les deux variables.
 #######################################
 
-temperature, pression, ratio, flux = getVariable()      # Importe les variables depuis Variables.py
+temperature, pression, ratio, ratioO2, flux = getVariable()      # Importe les variables depuis Variables.py
 KSMR = 10**(-(11650/temperature) + 13.076)              # Constante d’equilibre de la reaction Steam Methane Reforming (SMR)
 KWGS = 10**((1910/temperature) - 1.764)                 # Constante d’equilibre de la reaction Water–Gas Shift (WGS) lors du vaporeformage
 
@@ -34,7 +34,7 @@ def Bilan_de_masse_T_Variable():
     i=0
     H2_Purete_Tab = np.zeros(len(temperature_Tab))
     for T in temperature_Tab:
-        x = vaporeformageFluxSortant(T,pression, ratio, flux)
+        x = vaporeformageFluxSortant(T,pression, ratio, ratioO2, flux)
         CH4_T_Tab[i] = x[0]
         H2_T_Tab[i] = x[3]
         H2_Purete_Tab[i] = x[3]/np.sum(x)
@@ -52,7 +52,7 @@ def Bilan_de_masse_K_Variable():
     i=0
     H2_Purete_Tab = np.zeros(len(ratio_Tab))
     for k in ratio_Tab:
-        x = vaporeformageFluxSortant(temperature,pression, k, flux)
+        x = vaporeformageFluxSortant(temperature,pression, k, ratioO2, flux)
         CH4_K_Tab[i] = x[0]
         H2_K_Tab[i] = x[3]
         H2_Purete_Tab[i] = x[3]/np.sum(x)
@@ -95,7 +95,7 @@ def Bilan_de_masse_TK_Variable():
     plt.show()
 
     fig = plt.figure()
-    fig.suptitle('Pureté du flux de H2 gazeux en sortie du réacteur SMR en fonction de la température et du ratio H2O/CH4')
+    fig.suptitle('Pureté du flux de H2 gazeux en sortie du réacteur ATR en fonction de la température et du ratio H2O/CH4')
     ax = fig.gca(projection='3d')
     H_Purete_Tab = 100*H_Tab/(CH_Tab+H_Tab)
     surf = ax.plot_surface(X, Y, H_Purete_Tab.T, cmap='viridis', edgecolor='none')
