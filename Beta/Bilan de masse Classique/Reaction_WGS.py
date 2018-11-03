@@ -1,6 +1,5 @@
 import numpy as np
 
-from Variables import getVariable
 
 #######################################
 # Fichier contenant la fonction neccessaire

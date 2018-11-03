@@ -41,4 +41,11 @@ def ATR(temperature,p,k,kO2,flux):
     KWGS = 10**((1910/temperature) - 1.764)
     return(fsolve(equationsATR,np.array([0.5,0]), args=(KSMR,KWGS,p,k,kO2,flux)))
 #######################################
-print(ATR(temperature,pression,ratio,ratioO2,flux))
+
+# Retourne la valeur du systeme en focntion des degre d'avancement
+# Utiliser afin de verifier si les degres d'avancement sont correctes
+def verifATR(z):
+    x,y = z
+    return np.array([KSMR*(flux*(1-ratioO2/2)-x)*(flux*(ratio+ratioO2)-x-y)*(flux*(1+ratio+ratioO2)+2*x)**2 - ((x-y)*(3*x+y)**3)*pression**2,
+    KWGS*(flux*(ratio+ratioO2)-x-y)*(x-y) - ((ratioO2/2)+y)*(3*x+y)])
+#######################################

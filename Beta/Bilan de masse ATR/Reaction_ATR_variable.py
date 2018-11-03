@@ -35,7 +35,7 @@ WGS_K_Tab = np.zeros(len(ratio_Tab))                    # Tableau contenant les 
 
 # Plot le graphe des degres d'avancement, axe x = temperatures,
 # axe y = degre avancement SMR et WGS
-def VaporeformageTvariable():
+def VaporeformageTvariable(plot):
     i = 0
     for T in temperature_Tab:                                # Resous le systeme pour toutes les temperatures
         KSMR = 10**(-(11650/T) + 13.076)
@@ -45,18 +45,21 @@ def VaporeformageTvariable():
         SMR_T_Tab[i] = result_System[0]
         WGS_T_Tab[i] = result_System[1]
         i+=1
-    plt.plot(temperature_Tab,SMR_T_Tab,label='SMR')
-    plt.plot(temperature_Tab,WGS_T_Tab,label='WGS')
-    plt.xlabel('Temperature [K]')
-    plt.ylabel('Degré d\'avancement [mol/s]')               # Le degre d'avancement est exprime en pourcentage du flux d'entree
-    plt.grid(axis='both')
-    plt.legend()
-    plt.show()
+    if plot:
+        plt.plot(temperature_Tab,SMR_T_Tab,label='SMR')
+        plt.plot(temperature_Tab,WGS_T_Tab,label='WGS')
+        plt.xlabel('Temperature [K]')
+        plt.ylabel('Degré d\'avancement [mol/s]')               # Le degre d'avancement est exprime en pourcentage du flux d'entree
+        plt.grid(axis='both')
+        plt.legend()
+        plt.show()
+    else:
+        return [SMR_T_Tab, WGS_T_Tab]
 #######################################
 
 # Plot le graphe des degres d'avancement, axe x = Ratio H2O/CH4,
 # axe y = degre avancement SMR et WGS
-def VaporeformageKVariable():
+def VaporeformageKVariable(plot):
     i = 0
     for ratio in ratio_Tab:                                   # Resous le systeme pour toutes les temperatures
         result_System = fsolve(equationsATR,
@@ -64,13 +67,16 @@ def VaporeformageKVariable():
         SMR_K_Tab[i] = result_System[0]
         WGS_K_Tab[i] = result_System[1]
         i+=1
-    plt.plot(ratio_Tab,SMR_K_Tab,label='SMR')
-    plt.plot(ratio_Tab,WGS_K_Tab,label='WGS')
-    plt.xlabel('Ratio H2O/CH4 à %d K' % temperature)
-    plt.ylabel('Degré d\'avancement [mol/s]')               # Le degre d'avancement est exprime en pourcentage du flux d'entree
-    plt.grid(axis='both')
-    plt.legend()
-    plt.show()
+    if plot:
+        plt.plot(ratio_Tab,SMR_K_Tab,label='SMR')
+        plt.plot(ratio_Tab,WGS_K_Tab,label='WGS')
+        plt.xlabel('Ratio H2O/CH4 à %d K' % temperature)
+        plt.ylabel('Degré d\'avancement [mol/s]')               # Le degre d'avancement est exprime en pourcentage du flux d'entree
+        plt.grid(axis='both')
+        plt.legend()
+        plt.show()
+    else:
+        return [SMR_K_Tab, WGS_K_Tab]
 #######################################
 
 # Si plot==True
@@ -116,7 +122,7 @@ def VaporeformageTKVariable(plot):
 
 # Plot des graphs des degres d'avancement en fonction de T, p et k
 #######################################
-#VaporeformageTvariable()
-#VaporeformageKVariable()
+#VaporeformageTvariable(True)
+#VaporeformageKVariable(True)
 #VaporeformageTKVariable(True)
 #######################################

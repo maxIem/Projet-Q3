@@ -3,7 +3,7 @@ import numpy as np
 from mpl_toolkits.mplot3d import Axes3D
 from scipy.optimize import fsolve
 
-from Reaction_SMR import equationsVaporeformage
+from Reaction_Classique import equationsClassique
 from Variables import getVariable
 
 #######################################
@@ -20,76 +20,87 @@ KWGS = 10**((1910/temperature) - 1.764)                 # Constante d’equilibr
 temperature_Tab = np.arange(700,1400,25)                # Tableau contenant les temperatures de 700 a 1400 K
 SMR_T_Tab = np.zeros(len(temperature_Tab))              # Tableau contenant les degre d'avancement SMR pour chaque temperatures de temperature_Tab
 WGS_T_Tab = np.zeros(len(temperature_Tab))              # Tableau contenant les degre d'avancement WGS pour chaque temperatures de temperature_Tab
-SMR_T_Tab[-1] = flux/2                                  # Initialise les deux premieres valeurs de fsolve pour optimiser le temps de calcul
-WGS_T_Tab[-1] = flux/2                                  # Initialise les deux premieres valeurs de fsolve pour optimiser le temps de calcul
+SMR_T_Tab[-1], WGS_T_Tab[-1] = [flux/2, flux/2]         # Initialise les deux premieres valeurs de fsolve pour optimiser le temps de calcul
 
 pression_Tab = np.arange(10,40,0.2)                     # Tableau contenant les pressions de 10 a 40 bar
 SMR_P_Tab = np.zeros(len(pression_Tab))                 # Tableau contenant les degre d'avancement SMR pour chaque pression de pression_Tab
 WGS_P_Tab = np.zeros(len(pression_Tab))                 # Tableau contenant les degre d'avancement WGS pour chaque pression de pression_Tab
+SMR_P_Tab[-1], WGS_P_Tab[-1] = [flux/2, flux/2]         # Initialise les deux premieres valeurs de fsolve pour optimiser le temps de calcul
+
 
 ratio_Tab = np.arange(1,4,0.1)                          # Tableau contenant les ratio de H2O/CH4 1 a 4 bar
 SMR_K_Tab = np.zeros(len(ratio_Tab))                    # Tableau contenant les degre d'avancement SMR pour chaque ratio de ratio_Tab
 WGS_K_Tab = np.zeros(len(ratio_Tab))                    # Tableau contenant les degre d'avancement WGS pour chaque ratio de ratio_Tab
+SMR_K_Tab[-1], WGS_K_Tab[-1] = [flux/2, flux/2]         # Initialise les deux premieres valeurs de fsolve pour optimiser le temps de calcul
 
 #######################################
 
 # Plot le graphe des degres d'avancement, axe x = temperatures,
 # axe y = degre avancement SMR et WGS
-def VaporeformageTvariable():
+def ClassiqueTVariable(plot):
     i = 0
     for T in temperature_Tab:                                # Resous le systeme pour toutes les temperatures
         KSMR = 10**(-(11650/T) + 13.076)
         KWGS = 10**((1910/T) - 1.764)                        # Constante d’equilibre de la reaction Water–Gas Shift (WGS) lors du vaporeformage
-        result_System = fsolve(equationsVaporeformage,
+        result_System = fsolve(equationsClassique,
             np.array([SMR_T_Tab[i-1],WGS_T_Tab[i-1]]), args=(KSMR,KWGS,pression,ratio,flux))
         SMR_T_Tab[i] = result_System[0]
         WGS_T_Tab[i] = result_System[1]
         i+=1
-    plt.plot(temperature_Tab,SMR_T_Tab,label='SMR')
-    plt.plot(temperature_Tab,WGS_T_Tab,label='WGS')
-    plt.xlabel('Temperature [K]')
-    plt.ylabel('Degré d\'avancement [mol/s]')               # Le degre d'avancement est exprime en pourcentage du flux d'entree
-    plt.grid(axis='both')
-    plt.legend()
-    plt.show()
+    if plot:
+        plt.plot(temperature_Tab,SMR_T_Tab,label='SMR')
+        plt.plot(temperature_Tab,WGS_T_Tab,label='WGS')
+        plt.xlabel('Temperature [K]')
+        plt.ylabel('Degré d\'avancement [mol/s]')               # Le degre d'avancement est exprime en pourcentage du flux d'entree
+        plt.grid(axis='both')
+        plt.legend()
+        plt.show()
+    else:
+        return [SMR_T_Tab, WGS_T_Tab]
 #######################################
 
 # Plot le graphe des degres d'avancement, axe x = Ratio H2O/CH4,
 # axe y = degre avancement SMR et WGS
-def VaporeformageKVariable():
+def ClassiqueKVariable(plot):
     i = 0
     for ratio in ratio_Tab:                                   # Resous le systeme pour toutes les temperatures
-        result_System = fsolve(equationsVaporeformage,
+        result_System = fsolve(equationsClassique,
             np.array([SMR_K_Tab[i-1],WGS_K_Tab[i-1]]), args=(KSMR,KWGS,pression,ratio,flux))
         SMR_K_Tab[i] = result_System[0]
         WGS_K_Tab[i] = result_System[1]
         i+=1
-    plt.plot(ratio_Tab,SMR_K_Tab,label='SMR')
-    plt.plot(ratio_Tab,WGS_K_Tab,label='WGS')
-    plt.xlabel('Ratio H2O/CH4 à %d K' % temperature)
-    plt.ylabel('Degré d\'avancement [mol/s]')               # Le degre d'avancement est exprime en pourcentage du flux d'entree
-    plt.grid(axis='both')
-    plt.legend()
-    plt.show()
+    if plot:
+        plt.plot(ratio_Tab,SMR_K_Tab,label='SMR')
+        plt.plot(ratio_Tab,WGS_K_Tab,label='WGS')
+        plt.xlabel('Ratio H2O/CH4 à %d K' % temperature)
+        plt.ylabel('Degré d\'avancement [mol/s]')               # Le degre d'avancement est exprime en pourcentage du flux d'entree
+        plt.grid(axis='both')
+        plt.legend()
+        plt.show()
+    else:
+        return [SMR_K_Tab, WGS_K_Tab]
 #######################################
 
 # Plot le graphe des degres d'avancement, axe x = pression,
 # axe y = degre avancement SMR et WGS
-def VaporeformagePvariable():
+def ClassiquePVariable(plot):
     i = 0
     for pression in pression_Tab:                       # Resous le systeme pour toutes les pressions
-        result_System = fsolve(equationsVaporeformage,
+        result_System = fsolve(equationsClassique,
             np.array([SMR_P_Tab[i-1],WGS_P_Tab[i-1]]), args=(KSMR,KWGS,pression,ratio,flux))
         SMR_P_Tab[i] = result_System[0]
         WGS_P_Tab[i] = result_System[1]
         i+=1
-    plt.plot(pression_Tab,SMR_P_Tab,label='SMR')
-    plt.plot(pression_Tab,WGS_P_Tab,label='WGS')
-    plt.xlabel('Pression [bar] à %d K' % temperature)
-    plt.ylabel('Conversion [mol/s]')               # Le degre d'avancement est exprime en pourcentage du flux d'entree
-    plt.grid(axis='both')
-    plt.legend()
-    plt.show()
+    if plot:
+        plt.plot(pression_Tab,SMR_P_Tab,label='SMR')
+        plt.plot(pression_Tab,WGS_P_Tab,label='WGS')
+        plt.xlabel('Pression [bar] à %d K' % temperature)
+        plt.ylabel('Degré d\'avancement [mol/s]')               # Le degre d'avancement est exprime en pourcentage du flux d'entree
+        plt.grid(axis='both')
+        plt.legend()
+        plt.show()
+    else:
+        return [SMR_P_Tab, WGS_P_Tab]
 #######################################
 
 # Si plot==True
@@ -105,12 +116,12 @@ def VaporeformageTKVariable(plot):
         KWGS = 10**((1910/T) - 1.764)
         j = 0
         for ratio in ratio_Tab:                                   # Resous le systeme pour toutes les temperatures
-            result_System = fsolve(equationsVaporeformage,
+            result_System = fsolve(equationsClassique,
                 np.array([SMR_Tab[i-1][j-1],WGS_Tab[i-1][j-1]]), args=(KSMR,KWGS,pression,ratio,flux))
             if result_System[0]<0 or result_System[0]>1  or result_System[1]<0 or result_System[1]>0.5 :
-                result_System = fsolve(equationsVaporeformage, np.array([1,1]), args=(KSMR,KWGS,pression,ratio,flux))
+                result_System = fsolve(equationsClassique, np.array([1,1]), args=(KSMR,KWGS,pression,ratio,flux))
                 if result_System[0]<0 or result_System[0]>1  or result_System[1]<0 or result_System[1]>0.5 :
-                    result_System = fsolve(equationsVaporeformage, np.array([0.8,0.2]), args=(KSMR,KWGS,pression,ratio,flux))
+                    result_System = fsolve(equationsClassique, np.array([0.8,0.2]), args=(KSMR,KWGS,pression,ratio,flux))
             SMR_Tab[i][j] = result_System[0]
             WGS_Tab[i][j] = result_System[1]
             j+=1
@@ -139,8 +150,8 @@ def VaporeformageTKVariable(plot):
 
 # Plot des graphs des degres d'avancement en fonction de T, p et k
 #######################################
-#VaporeformageTvariable()
-#VaporeformagePvariable()
-#VaporeformageKVariable()
+#ClassiqueTVariable(True)
+#ClassiqueKVariable(True)
+#ClassiquePVariable(True)
 #VaporeformageTKVariable(True)
 #######################################

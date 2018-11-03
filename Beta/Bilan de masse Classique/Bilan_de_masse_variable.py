@@ -5,8 +5,8 @@ from scipy.optimize import fsolve
 
 from Bilan_de_masse import (vaporeformageDegreAvancement,
                             vaporeformageFluxSortant)
-from Reaction_ATR import equationsATR
-from Reaction_ATR_variable import VaporeformageTKVariable
+from Reaction_Classique import equationsClassique
+from Reaction_Classique_variable import VaporeformageTKVariable
 from Variables import getVariable
 
 #######################################
@@ -15,7 +15,7 @@ from Variables import getVariable
 # ou les deux variables.
 #######################################
 
-temperature, pression, ratio, ratioO2, flux = getVariable()      # Importe les variables depuis Variables.py
+temperature, pression, ratio, flux = getVariable()      # Importe les variables depuis Variables.py
 KSMR = 10**(-(11650/temperature) + 13.076)              # Constante d’equilibre de la reaction Steam Methane Reforming (SMR)
 KWGS = 10**((1910/temperature) - 1.764)                 # Constante d’equilibre de la reaction Water–Gas Shift (WGS) lors du vaporeformage
 
@@ -29,13 +29,12 @@ H2_K_Tab = np.zeros(len(ratio_Tab))                     # Tableau contenant les 
 
 #######################################
 
-# Plot le graphe des flux en sorties, axe x = temperatures,
-# axe y = nombres de moles
+# Plot le graphe des flux en sorties, axe x = temperatures, axe y = nombres de moles
 def Bilan_de_masse_T_Variable(plot):
     i=0
     H2_Purete_Tab = np.zeros(len(temperature_Tab))
     for T in temperature_Tab:
-        x = vaporeformageFluxSortant(T,pression, ratio, ratioO2, flux)
+        x = vaporeformageFluxSortant(T,pression, ratio, flux)
         CH4_T_Tab[i] = x[0]
         H2_T_Tab[i] = x[3]
         H2_Purete_Tab[i] = x[3]/np.sum(x)
@@ -51,13 +50,12 @@ def Bilan_de_masse_T_Variable(plot):
     else:
         return [CH4_T_Tab, H2_T_Tab, H2_Purete_Tab]
 
-# Plot le graphe des flux en sorties, axe x = ratio H2/CH4,
-# axe y = nombres de moles
+# Plot le graphe des flux en sorties, axe x = ratio H2O/CH4, axe y = nombres de moles
 def Bilan_de_masse_K_Variable(plot):
     i=0
     H2_Purete_Tab = np.zeros(len(ratio_Tab))
     for k in ratio_Tab:
-        x = vaporeformageFluxSortant(temperature,pression, k, ratioO2, flux)
+        x = vaporeformageFluxSortant(temperature,pression, k, flux)
         CH4_K_Tab[i] = x[0]
         H2_K_Tab[i] = x[3]
         H2_Purete_Tab[i] = x[3]/np.sum(x)
@@ -87,37 +85,40 @@ def Bilan_de_masse_TK_Variable(plot):
             CH_Tab[i][j] = x[0]
             H_Tab[i][j] = x[3]
     if plot:
-        fig = plt.figure(figsize=plt.figaspect(0.5))
-        fig.suptitle('Flux de sortie du réacteur en fonction de la temperature et du ratio H2O/CH4')
-        ax = fig.add_subplot(1, 2, 1, projection='3d')
+        #fig = plt.figure(figsize=plt.figaspect(0.5))
+        plt.rcParams.update({'figure.autolayout': True})
+        fig = plt.figure()
+        fig.suptitle('Flux de CH4 en sortie du réacteur')# en fonction de la temperature et du ratio H2O/CH4
+        #ax = fig.add_subplot(1, 2, 1, projection='3d')
+        ax = fig.gca(projection='3d')
         X, Y = np.meshgrid(temperature_Tab, ratio_Tab)
         surf = ax.plot_surface(X, Y, CH_Tab.T, cmap='viridis', edgecolor='none')
         fig.colorbar(surf, shrink=0.5, aspect=10)
         ax.set(xlabel='Temperature [K]', ylabel='Ratio H20/CH4', zlabel='mol/s de CH4')
-
-
-        ax = fig.add_subplot(1, 2, 2, projection='3d')
-        surf = ax.plot_surface(X, Y, H_Tab.T, cmap='viridis', edgecolor='none')
-        fig.colorbar(surf, shrink=0.5, aspect=10)
-        ax.set(xlabel='Temperature [K]', ylabel='Ratio H20/CH4', zlabel='mol/s de H2')
-
         plt.show()
 
         fig = plt.figure()
-        fig.suptitle('Pureté du flux de H2 gazeux en sortie du réacteur ATR en fonction de la température et du ratio H2O/CH4')
+        fig.suptitle('Flux de H2 en sortie du réacteur')
+        #ax = fig.add_subplot(1, 2, 2, projection='3d')
+        ax = fig.gca(projection='3d')
+        surf = ax.plot_surface(X, Y, H_Tab.T, cmap='viridis', edgecolor='none')
+        fig.colorbar(surf, shrink=0.5, aspect=10)
+        ax.set(xlabel='Temperature [K]', ylabel='Ratio H20/CH4', zlabel='mol/s de H2')
+        plt.show()
+
+        fig = plt.figure()
+        fig.suptitle('Pureté du flux de H2 gazeux en sortie du réacteur')
         ax = fig.gca(projection='3d')
         H_Purete_Tab = 100*H_Tab/(CH_Tab+H_Tab)
         surf = ax.plot_surface(X, Y, H_Purete_Tab.T, cmap='viridis', edgecolor='none')
         fig.colorbar(surf, shrink=0.5, aspect=10)
         ax.set(xlabel='Temperature [K]', ylabel='Ratio H20/CH4', zlabel='Pureté du flux [%]')
-
         plt.show()
     else:
         H_Purete_Tab = 100*H_Tab/(CH_Tab+H_Tab)
         return [CH_Tab,H_Tab, H_Purete_Tab]
 
 
-
-#Bilan_de_masse_T_Variable(True)
-#Bilan_de_masse_K_Variable(True)
+Bilan_de_masse_T_Variable(True)
+Bilan_de_masse_K_Variable(True)
 Bilan_de_masse_TK_Variable(True)

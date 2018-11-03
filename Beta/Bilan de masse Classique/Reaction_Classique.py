@@ -22,7 +22,7 @@ KWGS = 10**((1910/temperature) - 1.764)                 # Constante d’equilibr
 # k             : ratio H20/CH4
 # flux          : flux de CH4 en mol/s
 # SystemGuess correspond aux premieres valeurs pour resoudre le systeme
-def equationsVaporeformage(systemGuess,KSMR,KWGS,pression,ratio,flux):
+def equationsClassique(systemGuess, KSMR, KWGS, pression, ratio, flux):
     x, y = systemGuess
     return np.array([KSMR*(flux-x)*(ratio*flux-x-y)*((ratio+1)*flux+2*x)**2-((x-y)*(3*x+y)**3)*pression**2,
     KWGS*(x-y)*(ratio*flux-x-y)-y*(3*x+y)])                      # Retourne array [equation avancement SMR, equation avancement WGS]
@@ -33,16 +33,16 @@ def equationsVaporeformage(systemGuess,KSMR,KWGS,pression,ratio,flux):
 # p             : valeur de la pression
 # k             : ratio H20/CH4
 # flux          : flux de CH4 en mol/s
-def Vaporeformage(temperature,p,k,flux):
+def Classique(temperature, p, k, flux):
     KSMR = 10**(-(11650/temperature) + 13.076)
     KWGS = 10**((1910/temperature) - 1.764)
-    result_System = fsolve(equationsVaporeformage,np.array([flux/2,flux/2]), args=(KSMR,KWGS,p,k,flux))
+    result_System = fsolve(equationsClassique, np.array([flux / 2, flux / 2]), args=(KSMR, KWGS, p, k, flux))
     return(result_System)
 #######################################
 
 # Retourne la valeur du systeme en focntion des degre d'avancement
 # Utiliser afin de verifier si les degres d'avancement sont correctes
-def verifVaporeformage(z):
+def verifClassique(z):
     x,y = z
     return np.array([KSMR*(flux-x)*(ratio*flux-x-y)*((ratio+1)*flux+2*x)**2-((x-y)*(3*x+y)**3)*pression**2,
     KWGS*(x-y)*(ratio*flux-x-y)-y*(3*x+y)])
@@ -57,7 +57,7 @@ def verifVaporeformage(z):
 
 # Verification des solutions
 #######################################
-#sol = Vaporeformage(1100,30.0,2.5,1.0)
+#sol = Classique(1100,30.0,2.5,1.0)
 #print(sol)
-#print(verifVaporeformage(sol))
+#print(verifClassique(sol))
 #######################################

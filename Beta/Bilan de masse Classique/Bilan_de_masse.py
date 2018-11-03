@@ -1,6 +1,6 @@
 import numpy as np
 
-from Reaction_SMR import Vaporeformage
+from Reaction_Classique import Classique
 from Reaction_WGS import waterGasShift
 from Variables import getVariable
 
@@ -10,14 +10,14 @@ from Variables import getVariable
 #######################################
 
 temperature, pression, ratio, flux = getVariable()      # Importe les variables depuis Variables.py
-product_Flux_Tab = []                                   # Initialise le tableau des flux en sorite de forme [CH4, H2O, CO, H2, CO2]
+
 #######################################
 
 # Resous le systeme pour des parametres donnes en appelant
 # Reaction_Vaporeformage.py/Vaporeformage(Temperature,Pression,Ratio,Flux)
 # et reourne les flux en sorties du reateur sous forme d'array [ CH4, H2O, CO ,H2, CO2]
 def vaporeformageFluxSortant(Temperature,Pression,Ratio,Flux):
-    sol = Vaporeformage(Temperature,Pression,Ratio,Flux)
+    sol = Classique(Temperature,Pression,Ratio,Flux)
     # flux_Sortant = [ CH4, H2O, CO ,H2, CO2]
     flux_Sortant = np.array([ Flux-sol[0] , Ratio*Flux - sol[0] - sol[1] , sol[0] - sol[1] , 3*sol[0] + sol[1], sol[1]])
     #print(flux_Sortant)
@@ -59,3 +59,4 @@ def vaporeformageDegreAvancement(arg):
     return flux_Sortant
 
 #vaporeformageFluxSortant(temperature, pression, ratio, flux)
+#vaporeformageDegreAvancement([0.65,0.27])
