@@ -1,7 +1,5 @@
 import numpy as np
 
-from Variables import getVariable
-
 #######################################
 # Fichier contenant la fonction neccessaire
 # afin d'appliquer la reaction de combustion
