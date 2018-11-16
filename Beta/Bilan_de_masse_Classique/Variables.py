@@ -18,3 +18,10 @@ KWGS = 10**((1910/temperature) - 1.764)                        # Constante d’e
 # Retourne les variables neccesaire au bilan de masse du reacteur
 def getVariable():
     return np.array([temperature,pression,ratio,flux])
+
+def setVariable(arg):
+    global temperature
+    global pression
+    global ratio
+    global flux
+    [temperature,pression,ratio,flux] = arg

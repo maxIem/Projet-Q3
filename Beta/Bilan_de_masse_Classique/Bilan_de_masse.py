@@ -37,7 +37,7 @@ def vaporeformageFluxSortant(Temperature,Pression,Ratio,Flux):
     #print(flux_Sortant)
     #print('################################################### Absorption')
     #print('Purete H2 %.2f%%' % (100*flux_Sortant[3]/np.sum(flux_Sortant)))
-    return flux_Sortant
+    return flux_Sortant                                  # flux_Sortant = [ CH4, H2O, CO ,H2, CO2]
 
 # Recoit en arg les solutions du Systeme Vaporeformage
 # et reourne les flux en sorties du reacteur sous forme d'array [ CH4, H2O, CO ,H2, CO2]
@@ -58,4 +58,10 @@ def vaporeformageDegreAvancement(arg):
     #print('################################################### Absorption')
     return flux_Sortant
 
-#vaporeformageFluxSortant(temperature, pression, ratio, flux)
+def vaporeformage1Tonne():
+    molH = vaporeformageFluxSortant(temperature, pression, ratio, flux)[3]
+    f = (1000/(24*60*60))/(molH*2*10**(-3))
+    print(f)
+    print(vaporeformageFluxSortant(temperature, pression, ratio, f))
+
+print(vaporeformage1Tonne())

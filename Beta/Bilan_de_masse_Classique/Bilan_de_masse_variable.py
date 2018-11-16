@@ -6,7 +6,7 @@ from scipy.optimize import fsolve
 from Bilan_de_masse import (vaporeformageDegreAvancement,
                             vaporeformageFluxSortant)
 from Reaction_Classique import equationsClassique
-from Reaction_Classique_variable import VaporeformageTKVariable
+from Reaction_Classique_variable import ClassiqueTKVariable
 from Variables import getVariable
 
 #######################################
@@ -78,7 +78,7 @@ def Bilan_de_masse_K_Variable(plot):
 def Bilan_de_masse_TK_Variable(plot):
     CH_Tab = np.ones((len(temperature_Tab),len(ratio_Tab)))
     H_Tab = np.ones((len(temperature_Tab),len(ratio_Tab)))
-    SMR, WGS = VaporeformageTKVariable(False)
+    SMR, WGS = ClassiqueTKVariable(False)
     for i in range (0,len(SMR)):
         for j in range (0,len(SMR[0])):
             x = vaporeformageDegreAvancement(np.array([SMR[i][j],WGS[i][j]]))
@@ -119,6 +119,6 @@ def Bilan_de_masse_TK_Variable(plot):
         return [CH_Tab,H_Tab, H_Purete_Tab]
 
 
-#Bilan_de_masse_T_Variable(True)
-#Bilan_de_masse_K_Variable(True)
-#Bilan_de_masse_TK_Variable(True)
+Bilan_de_masse_T_Variable(True)
+Bilan_de_masse_K_Variable(True)
+Bilan_de_masse_TK_Variable(True)

@@ -107,7 +107,7 @@ def ClassiquePVariable(plot):
 # Plot le graphe des degres d'avancement, axe x = temperatures,
 # axe y = Ratio H2O/CH4, axe z = degre avancement SMR et WGS
 # Sinon renvoit les axes z, SMR et WGS
-def VaporeformageTKVariable(plot):
+def ClassiqueTKVariable(plot):
     SMR_Tab = np.ones((len(temperature_Tab),len(ratio_Tab))) * flux/2
     WGS_Tab = np.ones((len(temperature_Tab),len(ratio_Tab))) * flux/2
     i = 0
