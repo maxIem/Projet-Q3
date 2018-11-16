@@ -59,4 +59,3 @@ def vaporeformageDegreAvancement(arg):
     return flux_Sortant
 
 #vaporeformageFluxSortant(temperature, pression, ratio, flux)
-#vaporeformageDegreAvancement([0.65,0.27])
