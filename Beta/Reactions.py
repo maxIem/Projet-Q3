@@ -36,7 +36,7 @@ def equationsClassique(systemGuess, KSMR, KWGS, pression, ratio, flux):
 def Classique(temperature, p, k, flux):
     KSMR = 10**(-(11650/temperature) + 13.076)
     KWGS = 10**((1910/temperature) - 1.764)
-    result_System = fsolve(equationsClassique, np.array([flux / 2, flux / 2]), args=(KSMR, KWGS, p, k, flux))
+    result_System = fsolve(equationsClassique, np.array([flux / 2, flux / 5]), args=(KSMR, KWGS, p, k, flux))
     return(result_System)
 #######################################
 

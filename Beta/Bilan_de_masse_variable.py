@@ -14,43 +14,59 @@ from Variables import *
 # ou les deux variables.
 #######################################
 def variablesSMR(arg):
-    temperature, pression, ratio, flux = getVariableSMR()       # Importe les variables depuis Variables.py
-    KSMR = 10**(-(11650/temperature) + 13.076)                  # Constante d’equilibre de la reaction Steam Methane Reforming (SMR)
-    KWGS = 10**((1910/temperature) - 1.764)                     # Constante d’equilibre de la reaction Water–Gas Shift (WGS) lors du vaporeformage
+    temperature, pression, ratio, flux = getVariableSMR()                       # Importe les variables depuis Variables.py
+    SMR_tTabMin, SMR_tTabMax, SMR_tTablength, SMR_ratioTabMin, SMR_ratioTabMax, SMR_ratioTablength = getBorneSMR()
+
     if arg.lower()=='t':
-        temperature_Tab = np.arange(700,1400,25)                # Tableau contenant les temperatures de 700 a 1400 K
-        CH4_T_Tab = np.zeros(len(temperature_Tab))              # Tableau contenant les degre d'avancement SMR pour chaque temperatures de temperature_Tab
-        H2_T_Tab = np.zeros(len(temperature_Tab))               # Tableau contenant les degre d'avancement WGS pour chaque temperatures de temperature_Tab
-        return [temperature, pression, ratio, flux, temperature_Tab, CH4_T_Tab, H2_T_Tab]
+        temperature_Tab = np.linspace(SMR_tTabMin,
+                SMR_tTabMax,SMR_tTablength)                 # Tableau contenant les temperatures de 700 a 1400 K
+        CH4_T_Tab = np.zeros(len(temperature_Tab))                              # Tableau contenant les degre d'avancement SMR pour chaque temperatures de temperature_Tab
+        H2_T_Tab = np.zeros(len(temperature_Tab))                               # Tableau contenant les degre d'avancement WGS pour chaque temperatures de temperature_Tab
+        return [temperature, pression, ratio, flux,
+                temperature_Tab, CH4_T_Tab, H2_T_Tab]
+
     elif arg.lower()=='k':
-        ratio_Tab = np.arange(1,4,0.1)                          # Tableau contenant les ratio de H2O/CH4 1 a 4 bar
-        CH4_K_Tab = np.zeros(len(ratio_Tab))                    # Tableau contenant les degre d'avancement SMR pour chaque ratio de ratio_Tab
-        H2_K_Tab = np.zeros(len(ratio_Tab))                     # Tableau contenant les degre d'avancement WGS pour chaque ratio de ratio_Tab
-        return [temperature, pression, ratio, flux, ratio_Tab, CH4_K_Tab, H2_K_Tab]
+        ratio_Tab = np.linspace(SMR_ratioTabMin,SMR_ratioTabMax,
+                SMR_ratioTablength)                                             # Tableau contenant les ratio de H2O/CH4 1 a 4 bar
+        CH4_K_Tab = np.zeros(len(ratio_Tab))                                    # Tableau contenant les degre d'avancement SMR pour chaque ratio de ratio_Tab
+        H2_K_Tab = np.zeros(len(ratio_Tab))                                     # Tableau contenant les degre d'avancement WGS pour chaque ratio de ratio_Tab
+        return [temperature, pression, ratio, flux,
+                ratio_Tab, CH4_K_Tab, H2_K_Tab]
+
     elif arg.lower()=='tk':
-        temperature_Tab = np.arange(700,1400,25)                # Tableau contenant les temperatures de 700 a 1400 K
-        ratio_Tab = np.arange(1,4,0.1)                          # Tableau contenant les ratio de H2O/CH4 1 a 4 bar
-        return [temperature, pression, ratio, flux, temperature_Tab, ratio_Tab]
+        temperature_Tab = np.linspace(SMR_tTabMin,
+                SMR_tTabMax,SMR_tTablength)                 # Tableau contenant les temperatures de 700 a 1400 K
+        ratio_Tab = np.linspace(SMR_ratioTabMin,SMR_ratioTabMax,
+                SMR_ratioTablength)                                             # Tableau contenant les ratio de H2O/CH4 1 a 4 bar
+        return [temperature, pression, ratio, flux,
+                temperature_Tab, ratio_Tab]
 #######################################
 
 def variablesATR(arg):
-    temperature, pression, ratio, ratioO2, flux = getVariableATR()      # Importe les variables depuis Variables.py
-    KSMR = 10**(-(11650/temperature) + 13.076)                  # Constante d’equilibre de la reaction Steam Methane Reforming (SMR)
-    KWGS = 10**((1910/temperature) - 1.764)                     # Constante d’equilibre de la reaction Water–Gas Shift (WGS) lors du vaporeformage
+    temperature, pression, ratio, ratioO2, flux = getVariableATR()              # Importe les variables depuis Variables.py
+    SMR_tTabMin, SMR_tTabMax, SMR_tTablength, SMR_ratioTabMin, SMR_ratioTabMax, SMR_ratioTablength = getBorneSMR()
+
     if arg.lower()=='t':
-        temperature_Tab = np.arange(700,1400,25)                # Tableau contenant les temperatures de 700 a 1400 K
-        CH4_T_Tab = np.zeros(len(temperature_Tab))              # Tableau contenant les degre d'avancement SMR pour chaque temperatures de temperature_Tab
-        H2_T_Tab = np.zeros(len(temperature_Tab))               # Tableau contenant les degre d'avancement WGS pour chaque temperatures de temperature_Tab
-        return [temperature, pression, ratio, ratioO2, flux, temperature_Tab, CH4_T_Tab, H2_T_Tab]
+        temperature_Tab = np.linspace(SMR_tTabMin,
+                SMR_tTabMax,SMR_tTablength)                 # Tableau contenant les temperatures de 700 a 1400 K
+        CH4_T_Tab = np.zeros(len(temperature_Tab))                              # Tableau contenant les degre d'avancement SMR pour chaque temperatures de temperature_Tab
+        H2_T_Tab = np.zeros(len(temperature_Tab))                               # Tableau contenant les degre d'avancement WGS pour chaque temperatures de temperature_Tab
+        return [temperature, pression, ratio, ratioO2, flux,
+                temperature_Tab, CH4_T_Tab, H2_T_Tab]
     elif arg.lower()=='k':
-        ratio_Tab = np.arange(1,4,0.1)                          # Tableau contenant les ratio de H2O/CH4 1 a 4 bar
-        CH4_K_Tab = np.zeros(len(ratio_Tab))                    # Tableau contenant les degre d'avancement SMR pour chaque ratio de ratio_Tab
-        H2_K_Tab = np.zeros(len(ratio_Tab))                     # Tableau contenant les degre d'avancement WGS pour chaque ratio de ratio_Tab
-        return [temperature, pression, ratio, ratioO2, flux, ratio_Tab, CH4_K_Tab, H2_K_Tab]
+        ratio_Tab = np.linspace(SMR_ratioTabMin,SMR_ratioTabMax,
+                SMR_ratioTablength)                                             # Tableau contenant les ratio de H2O/CH4 1 a 4 bar
+        CH4_K_Tab = np.zeros(len(ratio_Tab))                                    # Tableau contenant les degre d'avancement SMR pour chaque ratio de ratio_Tab
+        H2_K_Tab = np.zeros(len(ratio_Tab))                                     # Tableau contenant les degre d'avancement WGS pour chaque ratio de ratio_Tab
+        return [temperature, pression, ratio, ratioO2, flux,
+                ratio_Tab, CH4_K_Tab, H2_K_Tab]
     elif arg.lower()=='tk':
-        temperature_Tab = np.arange(700,1400,25)                # Tableau contenant les temperatures de 700 a 1400 K
-        ratio_Tab = np.arange(1,4,0.1)                          # Tableau contenant les ratio de H2O/CH4 1 a 4 bar
-        return [temperature, pression, ratio, ratioO2, flux, temperature_Tab, ratio_Tab]
+        temperature_Tab = np.linspace(SMR_tTabMin,
+                SMR_tTabMax,SMR_tTablength)                 # Tableau contenant les temperatures de 700 a 1400 K
+        ratio_Tab = np.linspace(SMR_ratioTabMin,SMR_ratioTabMax,
+                SMR_ratioTablength)                                             # Tableau contenant les ratio de H2O/CH4 1 a 4 bar
+        return [temperature, pression, ratio, ratioO2, flux,
+                temperature_Tab, ratio_Tab]
 #######################################
 
 # Plot le graphe des flux en sorties, axe x = temperatures, axe y = nombres de moles
@@ -85,7 +101,6 @@ def Bilan_de_masse_T_Variable(reaction, plot):
 # Plot le graphe des flux en sorties, axe x = ratio H2O/CH4, axe y = nombres de moles
 def Bilan_de_masse_K_Variable(reaction, plot):
     i=0
-
     if reaction.lower()==('atr'):
         temperature, pression, ratio, ratioO2, flux, ratio_Tab, CH4_K_Tab, H2_K_Tab = variablesATR('K')
         reactionFsolve = ATRDegreAvancement
@@ -96,7 +111,6 @@ def Bilan_de_masse_K_Variable(reaction, plot):
         reactionFsolve = SMRDegreAvancement
         H2_Purete_Tab = np.zeros(len(ratio_Tab))
         SMR, WGS = ClassiqueKVariable(False)
-        print(SMR)
     for i in range (0,len(SMR)):
         x = reactionFsolve(np.array([SMR[i],WGS[i]]))
         CH4_K_Tab[i] = x[0]
@@ -175,7 +189,7 @@ def debitTonne(reaction, plot, debit=1000):
     f = (debit/(24*60*60))/(molH*2*10**(-3))
     if plot:
         fig = plt.figure()
-        fig.suptitle('Flux de CH4 necessaire afin d\'obtenir %.2f tonnes de H2 par jour' % float(debit/(10**3)))
+        fig.suptitle('Flux de CH4 necessaire afin de produire %.2f tonne(s) de H2 par jour' % float(debit/(10**3)))
         #ax = fig.add_subplot(1, 2, 2, projection='3d')
         ax = fig.gca(projection='3d')
         X, Y = np.meshgrid(temperature_Tab, ratio_Tab)

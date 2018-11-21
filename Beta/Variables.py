@@ -9,6 +9,12 @@ SMR_flux = 1.0                                                      # Debit d’
 SMR_pression = 30.0                                                 # Pression en bar
 SMR_ratio = 2.5                                                     # Rapport molaire H2O/CH4 dans l’alimentation du reacteur : variable entre 1 et 4
 SMR_temperature = 1100.0                                            # Temperature en kelvin dans le reacteur SMR : variable entre 700K et 1400K
+SMR_temperatureTabMin = 700
+SMR_temperatureTabMax = 1400
+SMR_temperatureTablength = 50
+SMR_ratioTabMin = 1
+SMR_ratioTabMax = 4
+SMR_ratioTablength = 30
 
 ATR_flux = 1.0                                                      # Debit d’entree de CH4 : normalisé a 1 mol/s
 ATR_pression = 50.0                                                 # Pression en bar
@@ -29,6 +35,27 @@ def setVariableSMR(arg):
     global ratio
     global flux
     [SMR_temperature,SMR_pression,SMR_ratio,SMR_flux] = arg
+
+def getBorneSMR():
+    return [SMR_temperatureTabMin, SMR_temperatureTabMax, SMR_temperatureTablength, SMR_ratioTabMin, SMR_ratioTabMax, SMR_ratioTablength]
+
+def setTBorneSMR(T1, T2):
+    global SMR_temperatureTabMin
+    global SMR_temperatureTabMax
+    SMR_temperatureTabMin, SMR_temperatureTabMax = [T1, T2]
+
+def setKBorneSMR(K1, K2):
+    global SMR_ratioTabMin
+    global SMR_ratioTabMax
+    SMR_ratioTabMin, SMR_ratioTabMax = [K1, K2]
+
+def resetBorneSMR():
+    global SMR_temperatureTabMin
+    global SMR_temperatureTabMax
+    global SMR_ratioTabMin
+    global SMR_ratioTabMax
+    SMR_ratioTabMin, SMR_ratioTabMax, SMR_ratioTablength = [1, 4, 30]
+    SMR_temperatureTabMin, SMR_temperatureTabMax, SMR_temperatureTablength = [700, 1400, 100]
 
 #######################################
 ################# ATR #################
