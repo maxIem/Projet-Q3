@@ -3,8 +3,10 @@ from mpl_toolkits.mplot3d import Axes3D
 from numpy import *
 from Variables import *
 from Reactions import *
+from Reactions_Variable import ClassiqueTKVariable
 #######################################
-pression, ratio, fluxCH4 = getVariableSMR()[1:4]
+temperature, pression, ratio, fluxCH4 = getVariableSMR()
+SMR_tTabMin, SMR_tTabMax, SMR_tTablength, SMR_ratioTabMin, SMR_ratioTabMax, SMR_ratioTablength = getBorneSMR()
 
 CpGazF = 1200                                                                   # Capacite calorifique des gaz du four en J/(kg.K)
 CpGazP = 2900                                                                   # Capacite calorifique des gaz du procede en J/(kg.K)
@@ -30,7 +32,7 @@ tExt = 293.15                                                                   
 tExtCH4 = 273.15 + 30.5                                                         # Temperature du flux de CH4
 tExtH2O = 273.15 + 100                                                          # Temperature du flux de H2O
 tInVap = 693                                                                    # Temperature d'entree des gaz dans le vaporeformage en K
-tExtVap = getVariableSMR()[0]                                                   # Temperature de sortie des gaz dans le vaporeformage en K
+tExtVap = temperature                                                           # Temperature de sortie des gaz dans le vaporeformage en K
 tInWGS = 570                                                                    # Temperature d'entree des gaz dans le reacteur WGS en K
 tExtWGS = 480                                                                   # Temperature de dortie des gaz dans le reacteur WGS en K
 tFinal = 350
@@ -67,23 +69,32 @@ def Bilan_Energie(tExtVap=tExtVap, ratio=ratio, retourne=False):
         print(deltaE)
 #######################################
 
-def Bilan_Energie_Variable(retourne=False):
-    deltaE = CpmolCH4*(tInVap-tExtCH4) * fluxCH4  + CpmolH2O*(tInVap-tExtH2O)*ratio*fluxCH4
+def Bilan_Energie_Variable(plot=False):
+    SMR_tTab = array([linspace(SMR_tTabMin,SMR_tTabMax,SMR_tTablength),]*SMR_ratioTablength).T
+    SMR_kTab = array([linspace(SMR_ratioTabMin,SMR_ratioTabMax,SMR_ratioTablength),]*SMR_tTablength)
+    deltaE = CpmolCH4*(tInVap-tExtCH4) * fluxCH4  + CpmolH2O*(tInVap-tExtH2O)*SMR_kTab*fluxCH4
                                                                                 # Rechauffement des gazs provenant de l'exterieur
 
-    x, y = Classique(tExtVap, pression, ratio, fluxCH4)                         # Calcul des degres d'avancement
-    dHSMR, dHWGS1, dHWGS2 = Enthalpie(tExtVap)                                  # Calcul des enthalpie en fct de la temperature
-    deltaE += CpmolCH4*(tExtVap-tInVap) * fluxCH4  + CpmolH2O*(tExtVap-tInVap)*ratio*fluxCH4 + dHSMR * x + dHWGS1 * y
+    x, y = ClassiqueTKVariable(False)                                           # Calcul des degres d'avancement
+    dHSMR, dHWGS1, dHWGS2 = Enthalpie(SMR_tTab)                                 # Calcul des enthalpie en fct de la temperature
+    deltaE += CpmolCH4*(SMR_tTab-tInVap) * fluxCH4  + CpmolH2O*(SMR_tTab-tInVap)*SMR_kTab*fluxCH4 + dHSMR*x + dHWGS1*y
                                                                                 # Rechauffement des gazs dans le reacteur et calcul des energie des reactions
 
-    deltaE += (tInWGS - tExtVap) * ( (fluxCH4-x)*CpmolCH4 + (ratio*fluxCH4 - x - y)*CpmolH2O  + (x-y)*CpmolCO + (3*x+y)*CpmolH2 + y*CpmolCO2 )
+    deltaE += (tInWGS - SMR_tTab) * ( (fluxCH4-x)*CpmolCH4 + (SMR_kTab*fluxCH4 - x - y)*CpmolH2O  + (x-y)*CpmolCO + (3*x+y)*CpmolH2 + y*CpmolCO2 )
                                                                                 # Refroidissement des gazs provenant du reacteur
-    deltaE += dHWGS2*(x-y) + (tFinal-tInWGS) * ( (ratio*fluxCH4 - 2*y)*CpmolH2O + y*CpmolCO2 + 4*x*CpmolH2  )
+    deltaE += dHWGS2*(x-y) + (tFinal-tInWGS) * ((SMR_kTab*fluxCH4 - 2*y)*CpmolH2O + y*CpmolCO2 + 4*x*CpmolH2)
                                                                                 # Refroidissement des gazs dans le reacteur et calcul des energie des reactions
-    if retourne:
-        return deltaE
+    if plot:
+        fig = plt.figure()
+        fig.suptitle('Bilan d\'energie du reacteur SMR')
+        ax = fig.gca(projection='3d')
+        X, Y = np.meshgrid(linspace(SMR_tTabMin,SMR_tTabMax,SMR_tTablength), linspace(SMR_ratioTabMin,SMR_ratioTabMax,SMR_ratioTablength))
+        surf = ax.plot_surface(X, Y, deltaE.T, cmap='viridis', edgecolor='none')
+        fig.colorbar(surf, shrink=0.5, aspect=10)
+        ax.set(xlabel='Temperature [K]', ylabel='Ratio H20/CH4', zlabel='Bilan d\'energie [J]')
+        plt.show()
     else:
-        print(deltaE)
+        return deltaE
 #######################################
 
 
@@ -101,29 +112,8 @@ def Bilan_Energie_KVariable():
         i+=1
     print(bilan)
 
-def Bilan_Energie_TKVariable(plot):
-    bilan = zeros((100,30))
-    i=0
-    for T in linspace(700,1400,len(bilan)):
-        j=0
-        for K in linspace(1,4,len(bilan[0])):
-            bilan[i][j] = Bilan_Energie(tExtVap=T, ratio=K, retourne=True)
-            j+=1
-        i+=1
-    if plot:
-        fig = plt.figure()
-        fig.suptitle('Bilan d\'energie du reacteur SMR')# en fonction de la temperature et du ratio H2O/CH4
-        ax = fig.gca(projection='3d')
-        X, Y = np.meshgrid(linspace(700,1400,len(bilan)), linspace(1,4,len(bilan[0])))
-        surf = ax.plot_surface(X, Y, bilan.T, cmap='viridis', edgecolor='none')
-        fig.colorbar(surf, shrink=0.5, aspect=10)
-        ax.set(xlabel='Temperature [K]', ylabel='Ratio H20/CH4', zlabel='Bilan d\'energie [J]')
-        plt.show()
-    else:
-        return [bilan]
-
 #Bilan_Energie()
 #Bilan_Energie(ratio=2.5)
 #Bilan_Energie_TVariable()
 #Bilan_Energie_KVariable()
-Bilan_Energie_TKVariable(True)
+Bilan_Energie_Variable(True)

@@ -76,12 +76,12 @@ def Bilan_de_masse_T_Variable(reaction, plot):
         temperature, pression, ratio, ratioO2, flux, temperature_Tab, CH4_T_Tab, H2_T_Tab = variablesATR('T')
         reactionFsolve = ATRDegreAvancement
         H2_Purete_Tab = np.zeros(len(temperature_Tab))
-        SMR, WGS = ATRTVariable(False)
+        SMR, WGS = TVariable('ATR', False)
     else :
         temperature, pression, ratio, flux, temperature_Tab, CH4_T_Tab, H2_T_Tab = variablesSMR('T')
         reactionFsolve = SMRDegreAvancement
         H2_Purete_Tab = np.zeros(len(temperature_Tab))
-        SMR, WGS = ClassiqueTVariable(False)
+        SMR, WGS = TVariable('SMR', False)
     for i in range (0,len(SMR)):
         x = reactionFsolve(np.array([SMR[i],WGS[i]]))
         CH4_T_Tab[i] = x[0]
@@ -105,12 +105,12 @@ def Bilan_de_masse_K_Variable(reaction, plot):
         temperature, pression, ratio, ratioO2, flux, ratio_Tab, CH4_K_Tab, H2_K_Tab = variablesATR('K')
         reactionFsolve = ATRDegreAvancement
         H2_Purete_Tab = np.zeros(len(ratio_Tab))
-        SMR, WGS = ATRKVariable(False)
+        SMR, WGS = KVariable('ATR', False)
     else :
         temperature, pression, ratio, flux, ratio_Tab, CH4_K_Tab, H2_K_Tab = variablesSMR('K')
         reactionFsolve = SMRDegreAvancement
         H2_Purete_Tab = np.zeros(len(ratio_Tab))
-        SMR, WGS = ClassiqueKVariable(False)
+        SMR, WGS = KVariable('SMR', False)
     for i in range (0,len(SMR)):
         x = reactionFsolve(np.array([SMR[i],WGS[i]]))
         CH4_K_Tab[i] = x[0]
@@ -137,13 +137,13 @@ def Bilan_de_masse_TK_Variable(reaction, plot):
         reactionFsolve = ATRDegreAvancement
         CH_Tab = np.ones((len(temperature_Tab),len(ratio_Tab)))
         H_Tab = np.ones((len(temperature_Tab),len(ratio_Tab)))
-        SMR, WGS = ATRTKVariable(False)
+        SMR, WGS = TKVariable('ATR', False)
     else :
         temperature, pression, ratio, flux, temperature_Tab, ratio_Tab = variablesSMR('TK')
         reactionFsolve = SMRDegreAvancement
         CH_Tab = np.ones((len(temperature_Tab),len(ratio_Tab)))
         H_Tab = np.ones((len(temperature_Tab),len(ratio_Tab)))
-        SMR, WGS = ClassiqueTKVariable(False)
+        SMR, WGS = TKVariable('SMR', False)
     for i in range (0,len(SMR)):
         for j in range (0,len(SMR[0])):
             x = reactionFsolve(np.array([SMR[i][j],WGS[i][j]]))
