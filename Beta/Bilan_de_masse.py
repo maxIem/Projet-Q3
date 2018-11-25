@@ -36,16 +36,12 @@ def SMRFluxSortant(Temperature,Pression,Ratio,Flux):
 
 # Recoit en arg les solutions du Systeme Vaporeformage
 # et reourne les flux en sorties du reacteur sous forme d'array [ CH4, H2O, CO ,H2, CO2]
-def SMRDegreAvancement(arg):
-    ratio = getVariableSMR()[2]
+def SMRDegreAvancement(arg, ratio):
     flux = getVariableSMR()[3]
     flux_Sortant = np.array([ flux-arg[0] , ratio*flux - arg[0] - arg[1] , arg[0] - arg[1] , 3*arg[0] + arg[1], arg[1]])
     wgs_sortant = waterGasShift([flux_Sortant[2], flux_Sortant[1], flux_Sortant[4], flux_Sortant[3]])
-    flux_Sortant[2] = wgs_sortant[0]                     # CO
-    flux_Sortant[1] = wgs_sortant[1]                     # H2O
-    flux_Sortant[4] = wgs_sortant[2]                     # CO2
-    flux_Sortant[3] = wgs_sortant[3]                     # H2
-    #print(flux_Sortant)
+    #print(wgs_sortant)
+    flux_Sortant[2], flux_Sortant[1], flux_Sortant[4], flux_Sortant[3] = wgs_sortant                     # CO
     #print('################################################### WGS')
     flux_Sortant[1] = 0                                  # Condensation H2O
     #print(flux_Sortant)
@@ -93,14 +89,12 @@ def ATRFluxSortant(Temperature,Pression,Ratio,RatioO2,flux):
 
 # Recoit en arg les solutions du Systeme Vaporeformage
 # et reourne les flux en sorties du reacteur sous forme d'array [ CH4, H2O, CO ,H2, CO2]
-def ATRDegreAvancement(arg):
-    temperature, pression, ratio, ratioO2, flux = getVariableATR()      # Importe les variables depuis Variables.py
+def ATRDegreAvancement(arg, ratio):
+    ratioO2, flux = getVariableATR()[3:5]      # Importe les variables depuis Variables.py
     flux_Sortant = np.array([ flux*(1-ratioO2/2)-arg[0] , flux*(1+ratio+ratioO2) - arg[0] - arg[1] , arg[0] - arg[1] , 3*arg[0] + arg[1], ratioO2/2 + arg[1]])
     wgs_sortant = waterGasShift([flux_Sortant[2], flux_Sortant[1], flux_Sortant[4], flux_Sortant[3]])
-    flux_Sortant[2] = wgs_sortant[0]                     # CO
-    flux_Sortant[1] = wgs_sortant[1]                     # H2O
-    flux_Sortant[4] = wgs_sortant[2]                     # CO2
-    flux_Sortant[3] = wgs_sortant[3]                     # H2
+    print(wgs_sortant)
+    flux_Sortant[2], flux_Sortant[1], flux_Sortant[4], flux_Sortant[3] = wgs_sortant                     # CO
     #print(flux_Sortant)
     #print('################################################### WGS')
     flux_Sortant[1] = 0                                  # Condensation H2O

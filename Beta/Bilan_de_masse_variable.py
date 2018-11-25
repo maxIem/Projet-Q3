@@ -83,7 +83,7 @@ def Bilan_de_masse_T_Variable(reaction, plot):
         H2_Purete_Tab = np.zeros(len(temperature_Tab))
         SMR, WGS = TVariable('SMR', False)
     for i in range (0,len(SMR)):
-        x = reactionFsolve(np.array([SMR[i],WGS[i]]))
+        x = reactionFsolve(np.array([SMR[i],WGS[i]]),ratio)
         CH4_T_Tab[i] = x[0]
         H2_T_Tab[i] = x[3]
         H2_Purete_Tab[i] = x[3]/np.sum(x)
@@ -112,7 +112,7 @@ def Bilan_de_masse_K_Variable(reaction, plot):
         H2_Purete_Tab = np.zeros(len(ratio_Tab))
         SMR, WGS = KVariable('SMR', False)
     for i in range (0,len(SMR)):
-        x = reactionFsolve(np.array([SMR[i],WGS[i]]))
+        x = reactionFsolve(np.array([SMR[i],WGS[i]]), ratio_Tab[i])
         CH4_K_Tab[i] = x[0]
         H2_K_Tab[i] = x[3]
         H2_Purete_Tab[i] = x[3]/np.sum(x)
@@ -137,23 +137,26 @@ def Bilan_de_masse_TK_Variable(reaction, plot):
         reactionFsolve = ATRDegreAvancement
         CH_Tab = np.ones((len(temperature_Tab),len(ratio_Tab)))
         H_Tab = np.ones((len(temperature_Tab),len(ratio_Tab)))
+        H_Purete_Tab = np.zeros((len(temperature_Tab),len(ratio_Tab)))
         SMR, WGS = TKVariable('ATR', False)
     else :
         temperature, pression, ratio, flux, temperature_Tab, ratio_Tab = variablesSMR('TK')
         reactionFsolve = SMRDegreAvancement
         CH_Tab = np.ones((len(temperature_Tab),len(ratio_Tab)))
         H_Tab = np.ones((len(temperature_Tab),len(ratio_Tab)))
+        H_Purete_Tab = np.zeros((len(temperature_Tab),len(ratio_Tab)))
         SMR, WGS = TKVariable('SMR', False)
+
     for i in range (0,len(SMR)):
         for j in range (0,len(SMR[0])):
-            x = reactionFsolve(np.array([SMR[i][j],WGS[i][j]]))
+            x = reactionFsolve(np.array([SMR[i][j],WGS[i][j]]), ratio_Tab[j])
             CH_Tab[i][j] = x[0]
             H_Tab[i][j] = x[3]
-    H_Purete_Tab = 100*H_Tab/(CH_Tab+H_Tab)
+            H_Purete_Tab[i][j] = 100*x[3]/np.sum(x)
     if plot:
         plt.rcParams.update({'figure.autolayout': True})
         fig = plt.figure()
-        fig.suptitle('Flux de CH4 en sortie du réacteur')# en fonction de la temperature et du ratio H2O/CH4
+        fig.suptitle('Flux de CH4 en sortie du réacteur %s' %reaction)# en fonction de la temperature et du ratio H2O/CH4
         ax = fig.gca(projection='3d')
         X, Y = np.meshgrid(temperature_Tab, ratio_Tab)
         surf = ax.plot_surface(X, Y, CH_Tab.T, cmap='viridis', edgecolor='none')
@@ -162,7 +165,7 @@ def Bilan_de_masse_TK_Variable(reaction, plot):
         plt.show()
 
         fig = plt.figure()
-        fig.suptitle('Flux de H2 en sortie du réacteur')
+        fig.suptitle('Flux de H2 en sortie du réacteur %s' %reaction)
         #ax = fig.add_subplot(1, 2, 2, projection='3d')
         ax = fig.gca(projection='3d')
         surf = ax.plot_surface(X, Y, H_Tab.T, cmap='viridis', edgecolor='none')
@@ -171,7 +174,7 @@ def Bilan_de_masse_TK_Variable(reaction, plot):
         plt.show()
 
         fig = plt.figure()
-        fig.suptitle('Pureté du flux de H2 gazeux en sortie du réacteur')
+        fig.suptitle('Pureté du flux de H2 gazeux en sortie du réacteur %s' %reaction)
         ax = fig.gca(projection='3d')
         surf = ax.plot_surface(X, Y, H_Purete_Tab.T, cmap='viridis', edgecolor='none')
         fig.colorbar(surf, shrink=0.5, aspect=10)
@@ -207,5 +210,5 @@ def debitTonne(reaction, plot, debit=1000):
 
 #Bilan_de_masse_T_Variable('ATR', True)
 #Bilan_de_masse_K_Variable('ATR', True)
-#Bilan_de_masse_TK_Variable('ATR', True)
+Bilan_de_masse_TK_Variable('ATR', True)
 #debitTonne('ATR',True)
