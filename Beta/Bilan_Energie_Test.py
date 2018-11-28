@@ -5,20 +5,12 @@ from Variables import *
 from Reactions import *
 from Reactions_Variable import *
 from Bilan_de_masse import *
+from CP import *
 #######################################
 temperature, pression, ratio, fluxCH4 = getVariableSMR()
 SMR_tTabMin, SMR_tTabMax, SMR_tTablength, SMR_ratioTabMin, SMR_ratioTabMax, SMR_ratioTablength = getBorneSMR()
 
-CpGazF = 1200                                                                   # Capacite calorifique des gaz du four en J/(kg.K)
-CpGazP = 2900                                                                   # Capacite calorifique des gaz du procede en J/(kg.K)
-CpmolCH4 = 35.69                                                                # Capacite calorifique du CH4 en J/(mol.K)
-CpmolH2O = 37.47                                                                # Capacite calorifique de H2O(g) en J/(mol.K)
 CpmolH2OL = 75.351 	                                                            # Capacite calorifique de H2O(l) en J/(mol.K)
-CpmolCO = 29.1                                                                  # Capacite calorifique du CO en J/(mol.K)
-CpmolCO2 = 37.135                                                               # Capacite calorifique du CO2 en J/(mol.K)
-CpmolH2 = 28.82                                                                 # Capacite calorifique du H2 en J/(mol.K)
-CpmolO2 = 29.385                                                                # Capacite calorifique du O2 en J/(mol.K)
-CpmolN2 = 29.125                                                                # Capacite calorifique du N2 en J/(mol.K)
 
 CpmolH2Vap = 40660                                                              # Chaleur latente de vaporisation H2O
 
@@ -51,10 +43,10 @@ tFinal = 350
 # Methane necessaire pour une certaine quantite d'energie dans un four classique en moles
 def besoinMethaneEnergie(e, plot=False):
     SMR_tTab = array([linspace(SMR_tTabMin,SMR_tTabMax,SMR_tTablength),]*SMR_ratioTablength).T
-    CpCombustion = CpmolCO2 + 2*CpmolH2O + (CpmolCH4 + CpmolO2)
-    E1 = (SMR_tTab - tExtCH4) * (CpmolCH4) + (SMR_tTab - tExt)*2*((21/100)*CpmolO2 + (79/100)*CpmolN2)
+    CpCombustion = CpmolCO2(SMR_tTab, 1223) + 2*CpmolH2O(SMR_tTab, 1223) + CpmolCH4(SMR_tTab, 1223) + CpmolO2(SMR_tTab, tExtCH4)
+    E1 = CpmolCH4(SMR_tTab, tExtCH4) + 2*((21/100)*CpmolO2(SMR_tTab, tExt) + (79/100)*CpmolN2(SMR_tTab, tExt))
                                                                                 # Energie necessaire pour augmenter la temperature des gaz a bruler jusque 1223K
-    E2 = dHCH4 + CpCombustion* (SMR_tTab - 1223)
+    E2 = dHCH4 + CpCombustion
     n = -e / (E1 + E2)
 
     if plot:
@@ -75,32 +67,30 @@ def besoinMethaneEnergie(e, plot=False):
 def Enthalpie(x, y, tExtVap, ratio):
     global dHSMR; global dHWGS
 
-    CpSMR = 3*CpmolH2 + CpmolCO - (CpmolCH4 + CpmolH2O)
-    dHSMR1 = (dHSMR + (tExtVap - 948) * CpSMR)*x
-
-    CpWGS = CpmolCO2 + CpmolH2 - (CpmolCO + CpmolH2O)                           # + car sort y, devient -y -> -- -> +
-    dHWGS1 = (dHWGS + CpWGS * (tExtVap - 948))*y
-
-    CpWGS = CpmolCO2 + CpmolH2 - (CpmolCO + CpmolH2O)                           # + car sort coef, devient -coef -> -- -> +   coef = min()
-    dHWGS2 = (dHWGS + CpWGS * (tExtWGS - 948)) * minimum(x-y, ratio*fluxCH4 -x -y)
+    Tf, Ti = [tExtVap, 948]
+    dHSMR1 = (dHSMR + 3*CpmolH2(Tf, Ti) + CpmolCO(Tf, Ti) - (CpmolCH4(Tf, Ti) + CpmolH2O(Tf, Ti)) )*x
+    dHWGS1 = (dHWGS +  CpmolCO2(Tf, Ti) + CpmolH2(Tf, Ti) - (CpmolCO(Tf, Ti)  + CpmolH2O(Tf, Ti)) )*y
+    dHWGS2 = (dHWGS +  CpmolCO2(Tf, Ti) + CpmolH2(Tf, Ti) - (CpmolCO(Tf, Ti)  + CpmolH2O(Tf, Ti)) )*minimum(x-y, ratio*fluxCH4 -x -y)
 
     return [dHSMR1, dHWGS1, dHWGS2]
 #######################################
 
-def Bilan_Energie(tExtVap=tExtVap, ratio=ratio, fluxCH4=fluxCH4, retourne=False):
+def Bilan_Energie(tExtVap=tExtVap, ratio=ratio, fluxCH4=fluxCH4, retourne=True):
     deltaE = ((tExtH2OG - tExtH2O)*CpmolH2OL + CpmolH2Vap)*ratio*fluxCH4
-    deltaE += CpmolCH4*(tInVap-tExtCH4) * fluxCH4  + CpmolH2O*(tInVap-tExtH2OG)*ratio*fluxCH4
+    deltaE += CpmolCH4(tInVap, tExtCH4) * fluxCH4  + CpmolH2O(tInVap, tExtH2OG)*ratio*fluxCH4
                                                                                 # Rechauffement des gazs provenant de l'exterieur
 
     x, y = Classique(tExtVap, pression, ratio, fluxCH4)                         # Calcul des degres d'avancement
     dHSMR, dHWGS1, dHWGS2 = Enthalpie(x, y, tExtVap, ratio)                     # Calcul des enthalpie en fct de la temperature
-    deltaE += CpmolCH4*(tExtVap-tInVap) * fluxCH4  + CpmolH2O*(tExtVap-tInVap)*ratio*fluxCH4 + dHSMR + dHWGS1
+    deltaE += CpmolCH4(tExtVap, tInVap) * fluxCH4  + CpmolH2O(tExtVap, tInVap)*ratio*fluxCH4 + dHSMR + dHWGS1
                                                                                 # Rechauffement des gazs dans le reacteur et calcul des energie des reactions
 
-    deltaE += (tInWGS - tExtVap) * ( (fluxCH4-x)*CpmolCH4 + (ratio*fluxCH4 - x - y)*CpmolH2O  + (x-y)*CpmolCO + (3*x+y)*CpmolH2 + y*CpmolCO2 )
+    deltaE += (fluxCH4-x)*CpmolCH4(tInWGS, tExtVap) + (ratio*fluxCH4 - x - y)*CpmolH2O(tInWGS, tExtVap)  + (x-y)*CpmolCO(tInWGS, tExtVap)
+    deltaE += (3*x+y)*CpmolH2(tInWGS, tExtVap) + y*CpmolCO2(tInWGS, tExtVap)
                                                                                 # Refroidissement des gazs provenant du reacteur
     X = minimum(x-y, ratio*fluxCH4 -x -y)
-    deltaE += dHWGS2 + (tFinal-tInWGS) * ((fluxCH4-x)*CpmolCH4 + (x-y-X)*CpmolCO + (ratio*fluxCH4 -x -y -X)*CpmolH2O + (y+X)*CpmolCO2 + (3*x+y+X)*CpmolH2)
+    deltaE += dHWGS2 + (fluxCH4-x)*CpmolCH4(tFinal, tInWGS) + (ratio*fluxCH4 -x -y -X)*CpmolH2O(tFinal, tInWGS) + (x-y-X)*CpmolCO(tFinal, tInWGS)
+    deltaE += (3*x+y+X)*CpmolH2(tFinal, tInWGS) + (y+X)*CpmolCO2(tFinal, tInWGS)
                                                                                 # Refroidissement des gazs dans le reacteur et calcul des energie des reactions
     deltaE += -(ratio*fluxCH4 -x -y -X)*CpmolH2Vap                              # Condensation H2O
     if retourne:
@@ -117,18 +107,18 @@ def Bilan_Energie_Variable(reaction, plot=False):
         SMR_kTab = array([linspace(SMR_ratioTabMin,SMR_ratioTabMax,SMR_ratioTablength),]*SMR_tTablength)
 
         deltaE = ((tExtH2OG - tExtH2O)*CpmolH2OL + CpmolH2Vap)*SMR_kTab*fluxCH4
-        deltaE += CpmolCH4*(tInVap-tExtCH4) * fluxCH4  + CpmolH2O*(tInVap-tExtH2OG)*SMR_kTab*fluxCH4
+        deltaE += CpmolCH4(tInVap, tExtCH4) * fluxCH4  + CpmolH2O(tInVap, tExtH2OG)*SMR_kTab*fluxCH4
                                                                                 # Rechauffement des gazs provenant de l'exterieur
 
         x, y = TKVariable('SMR', False)                                          # Calcul des degres d'avancement
         dHSMR, dHWGS1, dHWGS2 = Enthalpie(x, y, SMR_tTab, SMR_kTab)              # Calcul des enthalpie en fct de la temperature
-        deltaE += CpmolCH4*(SMR_tTab-tInVap) * fluxCH4  + CpmolH2O*(SMR_tTab-tInVap)*SMR_kTab*fluxCH4 + dHSMR + dHWGS1
+        deltaE += CpmolCH4(SMR_tTab, tInVap) * fluxCH4  + CpmolH2O(SMR_tTab, tInVap)*SMR_kTab*fluxCH4 + dHSMR + dHWGS1
                                                                                 # Rechauffement des gazs dans le reacteur et calcul des energie des reactions
 
-        deltaE += (tInWGS - SMR_tTab) * ( (fluxCH4-x)*CpmolCH4 + (SMR_kTab*fluxCH4 - x - y)*CpmolH2O  + (x-y)*CpmolCO + (3*x+y)*CpmolH2 + y*CpmolCO2 )
+        deltaE += (fluxCH4-x)*CpmolCH4(tInWGS, SMR_tTab) + (SMR_kTab*fluxCH4 - x - y)*CpmolH2O(tInWGS, SMR_tTab)  + (x-y)*CpmolCO(tInWGS, SMR_tTab) + (3*x+y)*CpmolH2(tInWGS, SMR_tTab) + y*CpmolCO2(tInWGS, SMR_tTab)
                                                                                 # Refroidissement des gazs provenant du reacteur
         X = minimum(x-y, ratio*fluxCH4 -x -y)
-        deltaE += dHWGS2 + (tFinal-tInWGS) * ((x-y-X)*CpmolCO + (SMR_kTab*fluxCH4 -x -y -X)*CpmolH2O + (y+X)*CpmolCO2 + (3*x+y+X)*CpmolH2)
+        deltaE += dHWGS2 +(fluxCH4-x)*CpmolCH4(tFinal, tInWGS) + (x-y-X)*CpmolCO(tFinal, tInWGS) + (SMR_kTab*fluxCH4 -x -y -X)*CpmolH2O(tFinal, tInWGS) + (y+X)*CpmolCO2(tFinal, tInWGS) + (3*x+y+X)*CpmolH2(tFinal, tInWGS)
                                                                                 # Refroidissement des gazs dans le reacteur et calcul des energie des reactions
         deltaE += -(SMR_kTab*fluxCH4 -x -y -X)*CpmolH2Vap                       # Condensation H2O
     if plot:
@@ -145,7 +135,7 @@ def Bilan_Energie_Variable(reaction, plot=False):
 #######################################
 
 def MBTU(E):
-    return E/1055
+    return E/(1055*10**6)
 
 def Bilan_Energie_TVariable():
     bilan = linspace(SMR_tTabMin, SMR_tTabMax, SMR_tTablength)
@@ -163,13 +153,13 @@ def Bilan_Energie_KVariable():
         i+=1
     print(bilan)
 
-Bilan_Energie()
+#Bilan_Energie(retourne=False)
 #Bilan_Energie(ratio=2.5)
 #Bilan_Energie_TVariable()
 #Bilan_Energie_KVariable()
 #Bilan_Energie_Variable('SMR',True)
-#besoinMethaneEnergie(Bilan_Energie_Variable('SMR', plot=False), plot=True)
+#besoinMethaneEnergie(Bilan_Energie_Variable('SMR', plot=False), plot=False)
 
 
 #f=SMRDebitTonne(debit=100000)
-#print(MBTU(Bilan_Energie(fluxCH4=f,retourne=True)+f*803000)*86400/10**6)
+#print(MBTU(Bilan_Energie(fluxCH4=f)+f*803000)*86400)

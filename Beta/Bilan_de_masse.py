@@ -52,12 +52,15 @@ def SMRDegreAvancement(arg, ratio):
     return flux_Sortant
 #######################################
 
-def SMRDebitTonne(debit=1000):
+def SMRDebitTonne(debit=1000, retourne=True):
     temperature, pression, ratio, flux = getVariableSMR()      # Importe les variables depuis Variables.py
     molH = SMRFluxSortant(temperature, pression, ratio, flux)[3]
     f = (debit/(24*60*60))/(molH*2*10**(-3))
-    print(f)
-    print(SMRFluxSortant(temperature, pression, ratio, f))
+    if retourne:
+        return f
+    else:
+        print(f)
+        print(SMRFluxSortant(temperature, pression, ratio, f))
 #######################################
 
 # Resous le systeme pour des parametres donnes en appelant
@@ -93,7 +96,6 @@ def ATRDegreAvancement(arg, ratio):
     ratioO2, flux = getVariableATR()[3:5]      # Importe les variables depuis Variables.py
     flux_Sortant = np.array([ flux*(1-ratioO2/2)-arg[0] , flux*(1+ratio+ratioO2) - arg[0] - arg[1] , arg[0] - arg[1] , 3*arg[0] + arg[1], ratioO2/2 + arg[1]])
     wgs_sortant = waterGasShift([flux_Sortant[2], flux_Sortant[1], flux_Sortant[4], flux_Sortant[3]])
-    print(wgs_sortant)
     flux_Sortant[2], flux_Sortant[1], flux_Sortant[4], flux_Sortant[3] = wgs_sortant                     # CO
     #print(flux_Sortant)
     #print('################################################### WGS')
@@ -106,12 +108,15 @@ def ATRDegreAvancement(arg, ratio):
     return flux_Sortant
 #######################################
 
-def ATRDebitTonne(debit=1000):
+def ATRDebitTonne(debit=1000,retourne=True):
     temperature, pression, ratio, ratioO2, flux = getVariableATR()
     molH = ATRFluxSortant(temperature, pression, ratio, ratioO2, flux)[3]
     f = (debit/(24*60*60))/(molH*2*10**(-3))
-    print(f)
-    print(ATRFluxSortant(temperature, pression, ratio, ratioO2, f))
+    if retourne:
+        return f
+    else:
+        print(f)
+        print(SMRFluxSortant(temperature, pression, ratio, f))
 
 
 #print(SMRFluxSortant(getVariableSMR()[0], getVariableSMR()[1], getVariableSMR()[2], getVariableSMR()[3]))
