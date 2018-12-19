@@ -30,10 +30,10 @@ def getVariableSMR():
     return [SMR_temperature,SMR_pression,SMR_ratio,SMR_flux]
 
 def setVariableSMR(arg):
-    global temperature
-    global pression
-    global ratio
-    global flux
+    global SMR_temperature
+    global SMR_pression
+    global SMR_ratio
+    global SMR_flux
     [SMR_temperature,SMR_pression,SMR_ratio,SMR_flux] = arg
 
 def getBorneSMR():
@@ -72,3 +72,15 @@ def setVariableATR(arg):
     global ratioO2
     global flux
     [ATR_temperature,ATR_pression,ATR_ratio,ATR_ratioO2,ATR_flux] = arg
+
+def resetVariableATR():
+    global ATR_temperature
+    global ATR_pression
+    global ATR_ratio
+    global ATR_ratioO2
+    global ATR_flux
+    ATR_flux = 1.0                                                      # Debit d’entree de CH4 : normalisé a 1 mol/s
+    ATR_pression = 50.0                                                 # Pression en bar
+    ATR_ratio = 1.15                                                    # Rapport molaire H2O/CH4 dans l’alimentation du reacteur : variable entre 1 et 4
+    ATR_ratioO2 = 0.6                                                   # Rapport molaire O2/CH4 dans l’alimentation du reacteur
+    ATR_temperature = 1300.0                                            # Temperature en kelvin dans le reacteur ATR

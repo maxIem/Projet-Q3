@@ -42,9 +42,9 @@ def Classique(temperature, p, k, flux):
 
 # Retourne la valeur du systeme en focntion des degre d'avancement
 # Utiliser afin de verifier si les degres d'avancement sont correctes
-def verifClassique(z):
+def verifClassique(z,temperature, pression, ratio, flux):
     x,y = z
-    temperature, pression, ratio, flux, KSMR, KWGS = getVariableSMR()
+    #temperature, pression, ratio, flux = getVariableSMR()
     KSMR = 10**(-(11650/temperature) + 13.076)
     KWGS = 10**((1910/temperature) - 1.764)
     return np.array([KSMR*(flux-x)*(ratio*flux-x-y)*((ratio+1)*flux+2*x)**2-((x-y)*(3*x+y)**3)*pression**2,
@@ -89,16 +89,27 @@ def equationsATR(systemGuess,KSMR,KWGS,pression,ratio,ratioO2,flux):
 def ATR(temperature,p,k,kO2,flux):
     KSMR = 10**(-(11650/temperature) + 13.076)
     KWGS = 10**((1910/temperature) - 1.764)
-    return(fsolve(equationsATR,np.array([0.5,0]), args=(KSMR,KWGS,p,k,kO2,flux)))
+    return(fsolve(equationsATR,np.array([flux/2,flux/4]), args=(KSMR,KWGS,p,k,kO2,flux)))#flux/2,flux/4  1,1
 #######################################
 
 # Retourne la valeur du systeme en focntion des degre d'avancement
 # Utiliser afin de verifier si les degres d'avancement sont correctes
-def verifATR(z):
+def verifATR(z,temperature, pression, ratio, ratioO2, flux):
     x,y = z
-    temperature, pression, ratio, ratioO2, flux, KSMR, KWGS = getVariableATR()
+    #temperature, pression, ratio, ratioO2, flux = getVariableATR()
     KSMR = 10**(-(11650/temperature) + 13.076)
     KWGS = 10**((1910/temperature) - 1.764)
     return np.array([KSMR*(flux*(1-ratioO2/2)-x)*(flux*(ratio+ratioO2)-x-y)*(flux*(1+ratio+ratioO2)+2*x)**2 - ((x-y)*(3*x+y)**3)*pression**2,
     KWGS*(flux*(ratio+ratioO2)-x-y)*(x-y) - ((ratioO2/2)+y)*(3*x+y)])
 #######################################
+"""
+flux = np.linspace(0,400,100)
+sol = np.zeros(len(flux))
+so = np.zeros(len(flux))
+for i in range(len(flux)):
+    sol[i] = ATR(1300,50,1.15,0.6,flux[i])[0]
+    so[i] = ATR(1300,50,1.15,0.6,flux[i])[1]
+plt.plot(flux,sol)
+plt.plot(flux,so)
+plt.show()
+"""

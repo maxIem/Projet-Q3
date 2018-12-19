@@ -187,7 +187,7 @@ def TKVariable(reaction, plot):
             i+=1
     if plot==True:
         fig = plt.figure(figsize=plt.figaspect(0.5))
-        fig.suptitle('Degré d\'avancement du systeme Vaporeformage en fonction de la température et du ratio H2O/CH4')
+        fig.suptitle('Degré d\'avancement du système Vaporeformage en fonction de la température et du ratio H2O/CH4')
         ax = fig.add_subplot(1, 2, 1, projection='3d')
         X, Y = np.meshgrid(temperature_Tab, ratio_Tab)
         surf = ax.plot_surface(X, Y, SMR_Tab.T, cmap='viridis', edgecolor='none')
@@ -195,6 +195,8 @@ def TKVariable(reaction, plot):
         ax.set_xlabel('Temperature [K]')
         ax.set_ylabel('Ratio H20/CH4')
         ax.set_zlabel('Degré d\'avancement Vaporeformage');
+        ax.view_init(azim=-110, elev=30)
+
 
         ax = fig.add_subplot(1, 2, 2, projection='3d')
         surf = ax.plot_surface(X, Y, WGS_Tab.T, cmap='viridis', edgecolor='none')
@@ -202,6 +204,7 @@ def TKVariable(reaction, plot):
         ax.set_xlabel('Temperature [K]')
         ax.set_ylabel('Ratio H20/CH4')
         ax.set_zlabel('Degré d\'avancement WaterGasShift');
+        ax.view_init(azim=-110, elev=30)
         plt.show()
     else:
         return np.array([SMR_Tab, WGS_Tab])
